@@ -194,4 +194,17 @@ def config_parser():
         help="will take every 1/N images as LLFF test set, paper uses 8",
     )
 
+    parser.add_argument(
+        "--onnx",
+        action="store_true",
+        help="export onnx model and exit",
+    )
+
+    parser.add_argument(
+        "--coreml",
+        action="store_true",
+        help="export coreml model and exit",
+    )
+
+
     return parser

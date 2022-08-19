@@ -1,8 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.onnx
+from torch.onnx import utils as onnx_utils
 import importlib
-
+import coremltools as ct
 
 def class_for_name(module_name, class_name):
     # load the module, will raise ImportError if module cannot be loaded
@@ -319,3 +321,38 @@ class ResUNet(nn.Module):
             x_coarse = x_out[:, : self.coarse_out_ch, :]
             x_fine = x_out[:, -self.fine_out_ch :, :]
         return x_coarse, x_fine
+
+    def onnx_export(self):
+        print("Onnx save function...")
+
+        x = torch.randn(10, 3, 800, 800).cuda()
+        # d = torch.randn(160128, 3).cuda()
+        # x = torch.randn(1, 32).cuda().float()
+        # h = torch.randn(1, 31).cuda().float()
+        # bound = 1.0
+
+        # print("onnx shapes: ", x.shape, h.shape)
+
+        # torch_script_graph, unconvertible_ops = onnx_utils.unconvertible_ops(self, (x,d,bound), opset_version=11)
+        # print(set(unconvertible_ops))
+
+        torch.onnx.export(self,
+                (x),
+                "full_gnt_nerf.onnx",
+                export_params=True,
+                opset_version=11,
+                do_constant_folding=True,
+                input_names = ['x'],
+                output_names = ['x_coarse', 'x_fine'])
+
+    def coreml_export(self):
+        # model = xxx
+        example_input = torch.rand(10, 3, 800, 800, requires_grad=False).cuda()
+        traced_model = torch.jit.trace(self, example_input)
+        # print(traced_model)
+        out = traced_model(example_input)
+        model = ct.convert(traced_model, inputs=[ct.ImageType(shape=example_input.shape, channel_first=True)])
+        model.save("gnt_coreml.mlmodel")
+        print('successfully export coreML')
+        
+

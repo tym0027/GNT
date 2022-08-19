@@ -91,6 +91,19 @@ class GNTModel(object):
                     self.net_fine, device_ids=[args.local_rank], output_device=args.local_rank
                 )
 
+        if args.onnx and args.coreml:
+            self.feature_net.onnx_export()
+            self.feature_net.coreml_export()
+            exit()
+
+        elif args.onnx:
+            self.feature_net.onnx_export()
+            exit()
+
+        elif args.coreml:
+            self.feature_net.coreml_export()
+            exit()
+
     def switch_to_eval(self):
         self.net_coarse.eval()
         self.feature_net.eval()

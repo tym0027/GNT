@@ -257,7 +257,8 @@ class SSIM(torch.nn.Module):
 
             if img1.is_cuda:
                 window = window.cuda(img1.get_device())
-            window = window.type_as(img1)
+            # window = window.type_as(img1)
+            window = window.type(img1.type())
 
             self.window = window
             self.channel = channel
@@ -271,7 +272,8 @@ def ssim_utils(img1, img2, window_size=11, size_average=True):
 
     if img1.is_cuda:
         window = window.cuda(img1.get_device())
-    window = window.type_as(img1)
+    # window = window.type_as(img1)
+    window = window.type(img1.type())
 
     return _ssim(img1, img2, window, window_size, channel, size_average)
 

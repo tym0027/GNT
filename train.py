@@ -311,6 +311,12 @@ if __name__ == "__main__":
     parser = config.config_parser()
     args = parser.parse_args()
 
+    if args.onnx:
+        print("doing onnx export")
+
+    if args.coreml:
+        print("doing coreml export")
+
     if args.distributed:
         torch.distributed.init_process_group(backend="nccl", init_method="env://")
         args.local_rank = int(os.environ.get("LOCAL_RANK"))
