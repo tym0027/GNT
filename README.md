@@ -14,6 +14,9 @@
 
 This repository is built based on IBRNet's [offical repository](https://github.com/googleinterns/IBRNet)
 
+## 200000 iteration model
+https://drive.google.com/file/d/1HLSEvrQ6WpQMs57gp1lTUM3r5tZdR-hL/view?usp=sharing
+
 ## Introduction
 
 We present <i>Generalizable NeRF Transformer</i> (<b>GNT</b>), a pure, unified transformer-based architecture that efficiently reconstructs Neural Radiance Fields (NeRFs) on the fly from source views.
