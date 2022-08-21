@@ -268,6 +268,7 @@ class GNT(nn.Module):
 
     def forward(self, rgb_feat, ray_diff, mask, pts, ray_d):
         # compute positional embeddings
+        print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
         viewdirs = ray_d
         viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True)
         viewdirs = torch.reshape(viewdirs, [-1, 3]).float()
@@ -306,3 +307,31 @@ class GNT(nn.Module):
             return torch.cat([outputs, attn], dim=1)
         else:
             return outputs
+
+
+    def onnx_export(self):
+        print("Onnx save function...")
+        
+        rgb_feat = torch.randn(10, 3, 800, 800).float().cuda()
+        ray_diff = torch.randn(10, 3, 800, 800).float().cuda()
+        mask = torch.randn(10, 3, 800, 800).float().cuda()
+        pts = torch.randn(10, 3, 800, 800).float().cuda()
+        ray_d = torch.randn(10, 3, 800, 800).float().cuda()
+        # d = torch.randn(160128, 3).cuda()
+        # x = torch.randn(1, 32).cuda().float()
+        # h = torch.randn(1, 31).cuda().float()
+        # bound = 1.0
+
+        # print("onnx shapes: ", x.shape, h.shape)
+
+        # torch_script_graph, unconvertible_ops = onnx_utils.unconvertible_ops(self, (x,d,bound), opset_version=11)
+        # print(set(unconvertible_ops))
+
+        torch.onnx.export(self,
+                (x),
+                "feature_network_gnt_nerf.onnx",
+                export_params=True,
+                opset_version=11,
+                do_constant_folding=True,
+                input_names = ['rgb_feat', 'ray_diff', 'mask', 'pts', 'ray_d'],
+                output_names = ['outputs'])

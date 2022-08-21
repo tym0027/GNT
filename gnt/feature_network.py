@@ -299,6 +299,7 @@ class ResUNet(nn.Module):
         return x
 
     def forward(self, x):
+        print("feature network: ", x.shape)
         x = self.relu(self.bn1(self.conv1(x)))
 
         x1 = self.layer1(x)
@@ -338,7 +339,7 @@ class ResUNet(nn.Module):
 
         torch.onnx.export(self,
                 (x),
-                "full_gnt_nerf.onnx",
+                "feature_network_gnt_nerf.onnx",
                 export_params=True,
                 opset_version=11,
                 do_constant_folding=True,
