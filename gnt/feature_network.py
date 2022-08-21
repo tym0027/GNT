@@ -299,7 +299,7 @@ class ResUNet(nn.Module):
         return x
 
     def forward(self, x):
-        print("feature network: ", x.shape)
+        # print("feature network: ", x.shape)
         x = self.relu(self.bn1(self.conv1(x)))
 
         x1 = self.layer1(x)

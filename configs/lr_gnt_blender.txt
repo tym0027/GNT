@@ -6,9 +6,9 @@ distributed = False
 
 ## dataset
 train_dataset = nerf_synthetic
-train_scenes = lego
+train_scenes = lr_lego
 eval_dataset = nerf_synthetic
-eval_scenes = lego
+eval_scenes = lr_lego
 
 ### TRAINING
 N_rand = 2048

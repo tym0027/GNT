@@ -268,7 +268,7 @@ class GNT(nn.Module):
 
     def forward(self, rgb_feat, ray_diff, mask, pts, ray_d):
         # compute positional embeddings
-        print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
+        # print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
         viewdirs = ray_d
         viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True)
         viewdirs = torch.reshape(viewdirs, [-1, 3]).float()
