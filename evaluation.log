@@ -6,27 +6,370 @@
   warnings.warn(msg)
 /home/rupprecht.t/.conda/envs/gnt/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and will be removed in 0.15. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
   warnings.warn(msg)
+Lossy conversion from float32 to uint8. Range [-0.01830669306218624, 1.0119372606277466]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.018106816336512566, 1.0113506317138672]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.019149495288729668, 1.0121636390686035]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.001323683187365532, 1.0217633247375488]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.021918093785643578, 1.0418925285339355]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.0017311926931142807, 1.0169448852539062]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.015180898830294609, 1.0404516458511353]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.006604677066206932, 1.011551856994629]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.018916664645075798, 1.0571469068527222]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.009800789877772331, 1.0140867233276367]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.011156303808093071, 1.0088152885437012]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.006425214931368828, 1.0165793895721436]. Convert image to uint8 prior to saving to suppress this warning.
+Lossy conversion from float32 to uint8. Range [-0.0054450612515211105, 1.0181968212127686]. Convert image to uint8 prior to saving to suppress this warning.
 Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
 Loading model from: /home/rupprecht.t/.conda/envs/gnt/lib/python3.8/site-packages/lpips/weights/v0.1/alex.pth
 Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
 Loading model from: /home/rupprecht.t/.conda/envs/gnt/lib/python3.8/site-packages/lpips/weights/v0.1/vgg.pth
 outputs will be saved to ./out/pretrained
 loading ['lego'] for val
-Traceback (most recent call last):
-  File "eval.py", line 236, in <module>
-    eval(args)
-  File "/home/rupprecht.t/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
-    return func(*args, **kwargs)
-  File "eval.py", line 82, in eval
-    model = GNTModel(
-  File "/home/rupprecht.t/sandbox/GNT/gnt/model.py", line 76, in __init__
-    self.start_step = self.load_from_ckpt(
-  File "/home/rupprecht.t/sandbox/GNT/gnt/model.py", line 174, in load_from_ckpt
-    self.load_model(fpath, load_opt, load_scheduler)
-  File "/home/rupprecht.t/sandbox/GNT/gnt/model.py", line 144, in load_model
-    self.net_coarse.load_state_dict(to_load["net_coarse"])
-  File "/home/rupprecht.t/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1497, in load_state_dict
-    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
-RuntimeError: Error(s) in loading state_dict for GNT:
-	Missing key(s) in state_dict: "view_trans.0.attn_norm.weight", "view_trans.0.attn_norm.bias", "view_trans.0.ff_norm.weight", "view_trans.0.ff_norm.bias", "view_trans.0.ff.fc1.weight", "view_trans.0.ff.fc1.bias", "view_trans.0.ff.fc2.weight", "view_trans.0.ff.fc2.bias", "view_trans.0.attn.q_fc.weight", "view_trans.0.attn.k_fc.weight", "view_trans.0.attn.v_fc.weight", "view_trans.0.attn.pos_fc.0.weight", "view_trans.0.attn.pos_fc.0.bias", "view_trans.0.attn.pos_fc.2.weight", "view_trans.0.attn.pos_fc.2.bias", "view_trans.0.attn.attn_fc.0.weight", "view_trans.0.attn.attn_fc.0.bias", "view_trans.0.attn.attn_fc.2.weight", "view_trans.0.attn.attn_fc.2.bias", "view_trans.0.attn.out_fc.weight", "view_trans.0.attn.out_fc.bias", "view_trans.1.attn_norm.weight", "view_trans.1.attn_norm.bias", "view_trans.1.ff_norm.weight", "view_trans.1.ff_norm.bias", "view_trans.1.ff.fc1.weight", "view_trans.1.ff.fc1.bias", "view_trans.1.ff.fc2.weight", "view_trans.1.ff.fc2.bias", "view_trans.1.attn.q_fc.weight", "view_trans.1.attn.k_fc.weight", "view_trans.1.attn.v_fc.weight", "view_trans.1.attn.pos_fc.0.weight", "view_trans.1.attn.pos_fc.0.bias", "view_trans.1.attn.pos_fc.2.weight", "view_trans.1.attn.pos_fc.2.bias", "view_trans.1.attn.attn_fc.0.weight", "view_trans.1.attn.attn_fc.0.bias", "view_trans.1.attn.attn_fc.2.weight", "view_trans.1.attn.attn_fc.2.bias", "view_trans.1.attn.out_fc.weight", "view_trans.1.attn.out_fc.bias", "view_trans.2.attn_norm.weight", "view_trans.2.attn_norm.bias", "view_trans.2.ff_norm.weight", "view_trans.2.ff_norm.bias", "view_trans.2.ff.fc1.weight", "view_trans.2.ff.fc1.bias", "view_trans.2.ff.fc2.weight", "view_trans.2.ff.fc2.bias", "view_trans.2.attn.q_fc.weight", "view_trans.2.attn.k_fc.weight", "view_trans.2.attn.v_fc.weight", "view_trans.2.attn.pos_fc.0.weight", "view_trans.2.attn.pos_fc.0.bias", "view_trans.2.attn.pos_fc.2.weight", "view_trans.2.attn.pos_fc.2.bias", "view_trans.2.attn.attn_fc.0.weight", "view_trans.2.attn.attn_fc.0.bias", "view_trans.2.attn.attn_fc.2.weight", "view_trans.2.attn.attn_fc.2.bias", "view_trans.2.attn.out_fc.weight", "view_trans.2.attn.out_fc.bias", "view_trans.3.attn_norm.weight", "view_trans.3.attn_norm.bias", "view_trans.3.ff_norm.weight", "view_trans.3.ff_norm.bias", "view_trans.3.ff.fc1.weight", "view_trans.3.ff.fc1.bias", "view_trans.3.ff.fc2.weight", "view_trans.3.ff.fc2.bias", "view_trans.3.attn.q_fc.weight", "view_trans.3.attn.k_fc.weight", "view_trans.3.attn.v_fc.weight", "view_trans.3.attn.pos_fc.0.weight", "view_trans.3.attn.pos_fc.0.bias", "view_trans.3.attn.pos_fc.2.weight", "view_trans.3.attn.pos_fc.2.bias", "view_trans.3.attn.attn_fc.0.weight", "view_trans.3.attn.attn_fc.0.bias", "view_trans.3.attn.attn_fc.2.weight", "view_trans.3.attn.attn_fc.2.bias", "view_trans.3.attn.out_fc.weight", "view_trans.3.attn.out_fc.bias", "ray_trans.0.attn_norm.weight", "ray_trans.0.attn_norm.bias", "ray_trans.0.ff_norm.weight", "ray_trans.0.ff_norm.bias", "ray_trans.0.ff.fc1.weight", "ray_trans.0.ff.fc1.bias", "ray_trans.0.ff.fc2.weight", "ray_trans.0.ff.fc2.bias", "ray_trans.0.attn.q_fc.weight", "ray_trans.0.attn.k_fc.weight", "ray_trans.0.attn.v_fc.weight", "ray_trans.0.attn.out_fc.weight", "ray_trans.0.attn.out_fc.bias", "ray_trans.1.attn_norm.weight", "ray_trans.1.attn_norm.bias", "ray_trans.1.ff_norm.weight", "ray_trans.1.ff_norm.bias", "ray_trans.1.ff.fc1.weight", "ray_trans.1.ff.fc1.bias", "ray_trans.1.ff.fc2.weight", "ray_trans.1.ff.fc2.bias", "ray_trans.1.attn.q_fc.weight", "ray_trans.1.attn.k_fc.weight", "ray_trans.1.attn.v_fc.weight", "ray_trans.1.attn.out_fc.weight", "ray_trans.1.attn.out_fc.bias", "ray_trans.2.attn_norm.weight", "ray_trans.2.attn_norm.bias", "ray_trans.2.ff_norm.weight", "ray_trans.2.ff_norm.bias", "ray_trans.2.ff.fc1.weight", "ray_trans.2.ff.fc1.bias", "ray_trans.2.ff.fc2.weight", "ray_trans.2.ff.fc2.bias", "ray_trans.2.attn.q_fc.weight", "ray_trans.2.attn.k_fc.weight", "ray_trans.2.attn.v_fc.weight", "ray_trans.2.attn.out_fc.weight", "ray_trans.2.attn.out_fc.bias", "ray_trans.3.attn_norm.weight", "ray_trans.3.attn_norm.bias", "ray_trans.3.ff_norm.weight", "ray_trans.3.ff_norm.bias", "ray_trans.3.ff.fc1.weight", "ray_trans.3.ff.fc1.bias", "ray_trans.3.ff.fc2.weight", "ray_trans.3.ff.fc2.bias", "ray_trans.3.attn.q_fc.weight", "ray_trans.3.attn.k_fc.weight", "ray_trans.3.attn.v_fc.weight", "ray_trans.3.attn.out_fc.weight", "ray_trans.3.attn.out_fc.bias". 
-	Unexpected key(s) in state_dict: "view_selftrans.0.attn_norm.weight", "view_selftrans.0.attn_norm.bias", "view_selftrans.0.ff_norm.weight", "view_selftrans.0.ff_norm.bias", "view_selftrans.0.ff.fc1.weight", "view_selftrans.0.ff.fc1.bias", "view_selftrans.0.ff.fc2.weight", "view_selftrans.0.ff.fc2.bias", "view_selftrans.0.attn.q_fc.weight", "view_selftrans.0.attn.k_fc.weight", "view_selftrans.0.attn.v_fc.weight", "view_selftrans.0.attn.out_fc.weight", "view_selftrans.0.attn.out_fc.bias", "view_selftrans.1.attn_norm.weight", "view_selftrans.1.attn_norm.bias", "view_selftrans.1.ff_norm.weight", "view_selftrans.1.ff_norm.bias", "view_selftrans.1.ff.fc1.weight", "view_selftrans.1.ff.fc1.bias", "view_selftrans.1.ff.fc2.weight", "view_selftrans.1.ff.fc2.bias", "view_selftrans.1.attn.q_fc.weight", "view_selftrans.1.attn.k_fc.weight", "view_selftrans.1.attn.v_fc.weight", "view_selftrans.1.attn.out_fc.weight", "view_selftrans.1.attn.out_fc.bias", "view_selftrans.2.attn_norm.weight", "view_selftrans.2.attn_norm.bias", "view_selftrans.2.ff_norm.weight", "view_selftrans.2.ff_norm.bias", "view_selftrans.2.ff.fc1.weight", "view_selftrans.2.ff.fc1.bias", "view_selftrans.2.ff.fc2.weight", "view_selftrans.2.ff.fc2.bias", "view_selftrans.2.attn.q_fc.weight", "view_selftrans.2.attn.k_fc.weight", "view_selftrans.2.attn.v_fc.weight", "view_selftrans.2.attn.out_fc.weight", "view_selftrans.2.attn.out_fc.bias", "view_selftrans.3.attn_norm.weight", "view_selftrans.3.attn_norm.bias", "view_selftrans.3.ff_norm.weight", "view_selftrans.3.ff_norm.bias", "view_selftrans.3.ff.fc1.weight", "view_selftrans.3.ff.fc1.bias", "view_selftrans.3.ff.fc2.weight", "view_selftrans.3.ff.fc2.bias", "view_selftrans.3.attn.q_fc.weight", "view_selftrans.3.attn.k_fc.weight", "view_selftrans.3.attn.v_fc.weight", "view_selftrans.3.attn.out_fc.weight", "view_selftrans.3.attn.out_fc.bias", "view_crosstrans.0.attn_norm.weight", "view_crosstrans.0.attn_norm.bias", "view_crosstrans.0.ff_norm.weight", "view_crosstrans.0.ff_norm.bias", "view_crosstrans.0.ff.fc1.weight", "view_crosstrans.0.ff.fc1.bias", "view_crosstrans.0.ff.fc2.weight", "view_crosstrans.0.ff.fc2.bias", "view_crosstrans.0.attn.q_fc.weight", "view_crosstrans.0.attn.k_fc.weight", "view_crosstrans.0.attn.v_fc.weight", "view_crosstrans.0.attn.pos_fc.0.weight", "view_crosstrans.0.attn.pos_fc.0.bias", "view_crosstrans.0.attn.pos_fc.2.weight", "view_crosstrans.0.attn.pos_fc.2.bias", "view_crosstrans.0.attn.attn_fc.0.weight", "view_crosstrans.0.attn.attn_fc.0.bias", "view_crosstrans.0.attn.attn_fc.2.weight", "view_crosstrans.0.attn.attn_fc.2.bias", "view_crosstrans.0.attn.out_fc.weight", "view_crosstrans.0.attn.out_fc.bias", "view_crosstrans.1.attn_norm.weight", "view_crosstrans.1.attn_norm.bias", "view_crosstrans.1.ff_norm.weight", "view_crosstrans.1.ff_norm.bias", "view_crosstrans.1.ff.fc1.weight", "view_crosstrans.1.ff.fc1.bias", "view_crosstrans.1.ff.fc2.weight", "view_crosstrans.1.ff.fc2.bias", "view_crosstrans.1.attn.q_fc.weight", "view_crosstrans.1.attn.k_fc.weight", "view_crosstrans.1.attn.v_fc.weight", "view_crosstrans.1.attn.pos_fc.0.weight", "view_crosstrans.1.attn.pos_fc.0.bias", "view_crosstrans.1.attn.pos_fc.2.weight", "view_crosstrans.1.attn.pos_fc.2.bias", "view_crosstrans.1.attn.attn_fc.0.weight", "view_crosstrans.1.attn.attn_fc.0.bias", "view_crosstrans.1.attn.attn_fc.2.weight", "view_crosstrans.1.attn.attn_fc.2.bias", "view_crosstrans.1.attn.out_fc.weight", "view_crosstrans.1.attn.out_fc.bias", "view_crosstrans.2.attn_norm.weight", "view_crosstrans.2.attn_norm.bias", "view_crosstrans.2.ff_norm.weight", "view_crosstrans.2.ff_norm.bias", "view_crosstrans.2.ff.fc1.weight", "view_crosstrans.2.ff.fc1.bias", "view_crosstrans.2.ff.fc2.weight", "view_crosstrans.2.ff.fc2.bias", "view_crosstrans.2.attn.q_fc.weight", "view_crosstrans.2.attn.k_fc.weight", "view_crosstrans.2.attn.v_fc.weight", "view_crosstrans.2.attn.pos_fc.0.weight", "view_crosstrans.2.attn.pos_fc.0.bias", "view_crosstrans.2.attn.pos_fc.2.weight", "view_crosstrans.2.attn.pos_fc.2.bias", "view_crosstrans.2.attn.attn_fc.0.weight", "view_crosstrans.2.attn.attn_fc.0.bias", "view_crosstrans.2.attn.attn_fc.2.weight", "view_crosstrans.2.attn.attn_fc.2.bias", "view_crosstrans.2.attn.out_fc.weight", "view_crosstrans.2.attn.out_fc.bias", "view_crosstrans.3.attn_norm.weight", "view_crosstrans.3.attn_norm.bias", "view_crosstrans.3.ff_norm.weight", "view_crosstrans.3.ff_norm.bias", "view_crosstrans.3.ff.fc1.weight", "view_crosstrans.3.ff.fc1.bias", "view_crosstrans.3.ff.fc2.weight", "view_crosstrans.3.ff.fc2.bias", "view_crosstrans.3.attn.q_fc.weight", "view_crosstrans.3.attn.k_fc.weight", "view_crosstrans.3.attn.v_fc.weight", "view_crosstrans.3.attn.pos_fc.0.weight", "view_crosstrans.3.attn.pos_fc.0.bias", "view_crosstrans.3.attn.pos_fc.2.weight", "view_crosstrans.3.attn.pos_fc.2.bias", "view_crosstrans.3.attn.attn_fc.0.weight", "view_crosstrans.3.attn.attn_fc.0.bias", "view_crosstrans.3.attn.attn_fc.2.weight", "view_crosstrans.3.attn.attn_fc.2.bias", "view_crosstrans.3.attn.out_fc.weight", "view_crosstrans.3.attn.out_fc.bias". 
+rgbfeat_fc.0.weight torch.Size([64, 35])
+rgbfeat_fc.0.bias torch.Size([64])
+rgbfeat_fc.2.weight torch.Size([64, 64])
+rgbfeat_fc.2.bias torch.Size([64])
+view_trans.0.attn_norm.weight torch.Size([64])
+view_trans.0.attn_norm.bias torch.Size([64])
+view_trans.0.ff_norm.weight torch.Size([64])
+view_trans.0.ff_norm.bias torch.Size([64])
+view_trans.0.ff.fc1.weight torch.Size([256, 64])
+view_trans.0.ff.fc1.bias torch.Size([256])
+view_trans.0.ff.fc2.weight torch.Size([64, 256])
+view_trans.0.ff.fc2.bias torch.Size([64])
+view_trans.0.attn.q_fc.weight torch.Size([64, 64])
+view_trans.0.attn.k_fc.weight torch.Size([64, 64])
+view_trans.0.attn.v_fc.weight torch.Size([64, 64])
+view_trans.0.attn.pos_fc.0.weight torch.Size([8, 4])
+view_trans.0.attn.pos_fc.0.bias torch.Size([8])
+view_trans.0.attn.pos_fc.2.weight torch.Size([64, 8])
+view_trans.0.attn.pos_fc.2.bias torch.Size([64])
+view_trans.0.attn.attn_fc.0.weight torch.Size([8, 64])
+view_trans.0.attn.attn_fc.0.bias torch.Size([8])
+view_trans.0.attn.attn_fc.2.weight torch.Size([64, 8])
+view_trans.0.attn.attn_fc.2.bias torch.Size([64])
+view_trans.0.attn.out_fc.weight torch.Size([64, 64])
+view_trans.0.attn.out_fc.bias torch.Size([64])
+view_trans.1.attn_norm.weight torch.Size([64])
+view_trans.1.attn_norm.bias torch.Size([64])
+view_trans.1.ff_norm.weight torch.Size([64])
+view_trans.1.ff_norm.bias torch.Size([64])
+view_trans.1.ff.fc1.weight torch.Size([256, 64])
+view_trans.1.ff.fc1.bias torch.Size([256])
+view_trans.1.ff.fc2.weight torch.Size([64, 256])
+view_trans.1.ff.fc2.bias torch.Size([64])
+view_trans.1.attn.q_fc.weight torch.Size([64, 64])
+view_trans.1.attn.k_fc.weight torch.Size([64, 64])
+view_trans.1.attn.v_fc.weight torch.Size([64, 64])
+view_trans.1.attn.pos_fc.0.weight torch.Size([8, 4])
+view_trans.1.attn.pos_fc.0.bias torch.Size([8])
+view_trans.1.attn.pos_fc.2.weight torch.Size([64, 8])
+view_trans.1.attn.pos_fc.2.bias torch.Size([64])
+view_trans.1.attn.attn_fc.0.weight torch.Size([8, 64])
+view_trans.1.attn.attn_fc.0.bias torch.Size([8])
+view_trans.1.attn.attn_fc.2.weight torch.Size([64, 8])
+view_trans.1.attn.attn_fc.2.bias torch.Size([64])
+view_trans.1.attn.out_fc.weight torch.Size([64, 64])
+view_trans.1.attn.out_fc.bias torch.Size([64])
+view_trans.2.attn_norm.weight torch.Size([64])
+view_trans.2.attn_norm.bias torch.Size([64])
+view_trans.2.ff_norm.weight torch.Size([64])
+view_trans.2.ff_norm.bias torch.Size([64])
+view_trans.2.ff.fc1.weight torch.Size([256, 64])
+view_trans.2.ff.fc1.bias torch.Size([256])
+view_trans.2.ff.fc2.weight torch.Size([64, 256])
+view_trans.2.ff.fc2.bias torch.Size([64])
+view_trans.2.attn.q_fc.weight torch.Size([64, 64])
+view_trans.2.attn.k_fc.weight torch.Size([64, 64])
+view_trans.2.attn.v_fc.weight torch.Size([64, 64])
+view_trans.2.attn.pos_fc.0.weight torch.Size([8, 4])
+view_trans.2.attn.pos_fc.0.bias torch.Size([8])
+view_trans.2.attn.pos_fc.2.weight torch.Size([64, 8])
+view_trans.2.attn.pos_fc.2.bias torch.Size([64])
+view_trans.2.attn.attn_fc.0.weight torch.Size([8, 64])
+view_trans.2.attn.attn_fc.0.bias torch.Size([8])
+view_trans.2.attn.attn_fc.2.weight torch.Size([64, 8])
+view_trans.2.attn.attn_fc.2.bias torch.Size([64])
+view_trans.2.attn.out_fc.weight torch.Size([64, 64])
+view_trans.2.attn.out_fc.bias torch.Size([64])
+view_trans.3.attn_norm.weight torch.Size([64])
+view_trans.3.attn_norm.bias torch.Size([64])
+view_trans.3.ff_norm.weight torch.Size([64])
+view_trans.3.ff_norm.bias torch.Size([64])
+view_trans.3.ff.fc1.weight torch.Size([256, 64])
+view_trans.3.ff.fc1.bias torch.Size([256])
+view_trans.3.ff.fc2.weight torch.Size([64, 256])
+view_trans.3.ff.fc2.bias torch.Size([64])
+view_trans.3.attn.q_fc.weight torch.Size([64, 64])
+view_trans.3.attn.k_fc.weight torch.Size([64, 64])
+view_trans.3.attn.v_fc.weight torch.Size([64, 64])
+view_trans.3.attn.pos_fc.0.weight torch.Size([8, 4])
+view_trans.3.attn.pos_fc.0.bias torch.Size([8])
+view_trans.3.attn.pos_fc.2.weight torch.Size([64, 8])
+view_trans.3.attn.pos_fc.2.bias torch.Size([64])
+view_trans.3.attn.attn_fc.0.weight torch.Size([8, 64])
+view_trans.3.attn.attn_fc.0.bias torch.Size([8])
+view_trans.3.attn.attn_fc.2.weight torch.Size([64, 8])
+view_trans.3.attn.attn_fc.2.bias torch.Size([64])
+view_trans.3.attn.out_fc.weight torch.Size([64, 64])
+view_trans.3.attn.out_fc.bias torch.Size([64])
+ray_trans.0.attn_norm.weight torch.Size([64])
+ray_trans.0.attn_norm.bias torch.Size([64])
+ray_trans.0.ff_norm.weight torch.Size([64])
+ray_trans.0.ff_norm.bias torch.Size([64])
+ray_trans.0.ff.fc1.weight torch.Size([256, 64])
+ray_trans.0.ff.fc1.bias torch.Size([256])
+ray_trans.0.ff.fc2.weight torch.Size([64, 256])
+ray_trans.0.ff.fc2.bias torch.Size([64])
+ray_trans.0.attn.q_fc.weight torch.Size([64, 64])
+ray_trans.0.attn.k_fc.weight torch.Size([64, 64])
+ray_trans.0.attn.v_fc.weight torch.Size([64, 64])
+ray_trans.0.attn.out_fc.weight torch.Size([64, 64])
+ray_trans.0.attn.out_fc.bias torch.Size([64])
+ray_trans.1.attn_norm.weight torch.Size([64])
+ray_trans.1.attn_norm.bias torch.Size([64])
+ray_trans.1.ff_norm.weight torch.Size([64])
+ray_trans.1.ff_norm.bias torch.Size([64])
+ray_trans.1.ff.fc1.weight torch.Size([256, 64])
+ray_trans.1.ff.fc1.bias torch.Size([256])
+ray_trans.1.ff.fc2.weight torch.Size([64, 256])
+ray_trans.1.ff.fc2.bias torch.Size([64])
+ray_trans.1.attn.q_fc.weight torch.Size([64, 64])
+ray_trans.1.attn.k_fc.weight torch.Size([64, 64])
+ray_trans.1.attn.v_fc.weight torch.Size([64, 64])
+ray_trans.1.attn.out_fc.weight torch.Size([64, 64])
+ray_trans.1.attn.out_fc.bias torch.Size([64])
+ray_trans.2.attn_norm.weight torch.Size([64])
+ray_trans.2.attn_norm.bias torch.Size([64])
+ray_trans.2.ff_norm.weight torch.Size([64])
+ray_trans.2.ff_norm.bias torch.Size([64])
+ray_trans.2.ff.fc1.weight torch.Size([256, 64])
+ray_trans.2.ff.fc1.bias torch.Size([256])
+ray_trans.2.ff.fc2.weight torch.Size([64, 256])
+ray_trans.2.ff.fc2.bias torch.Size([64])
+ray_trans.2.attn.q_fc.weight torch.Size([64, 64])
+ray_trans.2.attn.k_fc.weight torch.Size([64, 64])
+ray_trans.2.attn.v_fc.weight torch.Size([64, 64])
+ray_trans.2.attn.out_fc.weight torch.Size([64, 64])
+ray_trans.2.attn.out_fc.bias torch.Size([64])
+ray_trans.3.attn_norm.weight torch.Size([64])
+ray_trans.3.attn_norm.bias torch.Size([64])
+ray_trans.3.ff_norm.weight torch.Size([64])
+ray_trans.3.ff_norm.bias torch.Size([64])
+ray_trans.3.ff.fc1.weight torch.Size([256, 64])
+ray_trans.3.ff.fc1.bias torch.Size([256])
+ray_trans.3.ff.fc2.weight torch.Size([64, 256])
+ray_trans.3.ff.fc2.bias torch.Size([64])
+ray_trans.3.attn.q_fc.weight torch.Size([64, 64])
+ray_trans.3.attn.k_fc.weight torch.Size([64, 64])
+ray_trans.3.attn.v_fc.weight torch.Size([64, 64])
+ray_trans.3.attn.out_fc.weight torch.Size([64, 64])
+ray_trans.3.attn.out_fc.bias torch.Size([64])
+q_fcs.0.0.weight torch.Size([64, 190])
+q_fcs.0.0.bias torch.Size([64])
+q_fcs.0.2.weight torch.Size([64, 64])
+q_fcs.0.2.bias torch.Size([64])
+q_fcs.2.0.weight torch.Size([64, 190])
+q_fcs.2.0.bias torch.Size([64])
+q_fcs.2.2.weight torch.Size([64, 64])
+q_fcs.2.2.bias torch.Size([64])
+norm.weight torch.Size([64])
+norm.bias torch.Size([64])
+rgb_fc.weight torch.Size([3, 64])
+rgb_fc.bias torch.Size([3])
+
+rgbfeat_fc.0.weight torch.Size([64, 35])
+rgbfeat_fc.0.bias torch.Size([64])
+rgbfeat_fc.2.weight torch.Size([64, 64])
+rgbfeat_fc.2.bias torch.Size([64])
+view_selftrans.0.attn_norm.weight torch.Size([64])
+view_selftrans.0.attn_norm.bias torch.Size([64])
+view_selftrans.0.ff_norm.weight torch.Size([64])
+view_selftrans.0.ff_norm.bias torch.Size([64])
+view_selftrans.0.ff.fc1.weight torch.Size([256, 64])
+view_selftrans.0.ff.fc1.bias torch.Size([256])
+view_selftrans.0.ff.fc2.weight torch.Size([64, 256])
+view_selftrans.0.ff.fc2.bias torch.Size([64])
+view_selftrans.0.attn.q_fc.weight torch.Size([64, 64])
+view_selftrans.0.attn.k_fc.weight torch.Size([64, 64])
+view_selftrans.0.attn.v_fc.weight torch.Size([64, 64])
+view_selftrans.0.attn.out_fc.weight torch.Size([64, 64])
+view_selftrans.0.attn.out_fc.bias torch.Size([64])
+view_selftrans.1.attn_norm.weight torch.Size([64])
+view_selftrans.1.attn_norm.bias torch.Size([64])
+view_selftrans.1.ff_norm.weight torch.Size([64])
+view_selftrans.1.ff_norm.bias torch.Size([64])
+view_selftrans.1.ff.fc1.weight torch.Size([256, 64])
+view_selftrans.1.ff.fc1.bias torch.Size([256])
+view_selftrans.1.ff.fc2.weight torch.Size([64, 256])
+view_selftrans.1.ff.fc2.bias torch.Size([64])
+view_selftrans.1.attn.q_fc.weight torch.Size([64, 64])
+view_selftrans.1.attn.k_fc.weight torch.Size([64, 64])
+view_selftrans.1.attn.v_fc.weight torch.Size([64, 64])
+view_selftrans.1.attn.out_fc.weight torch.Size([64, 64])
+view_selftrans.1.attn.out_fc.bias torch.Size([64])
+view_selftrans.2.attn_norm.weight torch.Size([64])
+view_selftrans.2.attn_norm.bias torch.Size([64])
+view_selftrans.2.ff_norm.weight torch.Size([64])
+view_selftrans.2.ff_norm.bias torch.Size([64])
+view_selftrans.2.ff.fc1.weight torch.Size([256, 64])
+view_selftrans.2.ff.fc1.bias torch.Size([256])
+view_selftrans.2.ff.fc2.weight torch.Size([64, 256])
+view_selftrans.2.ff.fc2.bias torch.Size([64])
+view_selftrans.2.attn.q_fc.weight torch.Size([64, 64])
+view_selftrans.2.attn.k_fc.weight torch.Size([64, 64])
+view_selftrans.2.attn.v_fc.weight torch.Size([64, 64])
+view_selftrans.2.attn.out_fc.weight torch.Size([64, 64])
+view_selftrans.2.attn.out_fc.bias torch.Size([64])
+view_selftrans.3.attn_norm.weight torch.Size([64])
+view_selftrans.3.attn_norm.bias torch.Size([64])
+view_selftrans.3.ff_norm.weight torch.Size([64])
+view_selftrans.3.ff_norm.bias torch.Size([64])
+view_selftrans.3.ff.fc1.weight torch.Size([256, 64])
+view_selftrans.3.ff.fc1.bias torch.Size([256])
+view_selftrans.3.ff.fc2.weight torch.Size([64, 256])
+view_selftrans.3.ff.fc2.bias torch.Size([64])
+view_selftrans.3.attn.q_fc.weight torch.Size([64, 64])
+view_selftrans.3.attn.k_fc.weight torch.Size([64, 64])
+view_selftrans.3.attn.v_fc.weight torch.Size([64, 64])
+view_selftrans.3.attn.out_fc.weight torch.Size([64, 64])
+view_selftrans.3.attn.out_fc.bias torch.Size([64])
+view_crosstrans.0.attn_norm.weight torch.Size([64])
+view_crosstrans.0.attn_norm.bias torch.Size([64])
+view_crosstrans.0.ff_norm.weight torch.Size([64])
+view_crosstrans.0.ff_norm.bias torch.Size([64])
+view_crosstrans.0.ff.fc1.weight torch.Size([256, 64])
+view_crosstrans.0.ff.fc1.bias torch.Size([256])
+view_crosstrans.0.ff.fc2.weight torch.Size([64, 256])
+view_crosstrans.0.ff.fc2.bias torch.Size([64])
+view_crosstrans.0.attn.q_fc.weight torch.Size([64, 64])
+view_crosstrans.0.attn.k_fc.weight torch.Size([64, 64])
+view_crosstrans.0.attn.v_fc.weight torch.Size([64, 64])
+view_crosstrans.0.attn.pos_fc.0.weight torch.Size([8, 4])
+view_crosstrans.0.attn.pos_fc.0.bias torch.Size([8])
+view_crosstrans.0.attn.pos_fc.2.weight torch.Size([64, 8])
+view_crosstrans.0.attn.pos_fc.2.bias torch.Size([64])
+view_crosstrans.0.attn.attn_fc.0.weight torch.Size([8, 64])
+view_crosstrans.0.attn.attn_fc.0.bias torch.Size([8])
+view_crosstrans.0.attn.attn_fc.2.weight torch.Size([64, 8])
+view_crosstrans.0.attn.attn_fc.2.bias torch.Size([64])
+view_crosstrans.0.attn.out_fc.weight torch.Size([64, 64])
+view_crosstrans.0.attn.out_fc.bias torch.Size([64])
+view_crosstrans.1.attn_norm.weight torch.Size([64])
+view_crosstrans.1.attn_norm.bias torch.Size([64])
+view_crosstrans.1.ff_norm.weight torch.Size([64])
+view_crosstrans.1.ff_norm.bias torch.Size([64])
+view_crosstrans.1.ff.fc1.weight torch.Size([256, 64])
+view_crosstrans.1.ff.fc1.bias torch.Size([256])
+view_crosstrans.1.ff.fc2.weight torch.Size([64, 256])
+view_crosstrans.1.ff.fc2.bias torch.Size([64])
+view_crosstrans.1.attn.q_fc.weight torch.Size([64, 64])
+view_crosstrans.1.attn.k_fc.weight torch.Size([64, 64])
+view_crosstrans.1.attn.v_fc.weight torch.Size([64, 64])
+view_crosstrans.1.attn.pos_fc.0.weight torch.Size([8, 4])
+view_crosstrans.1.attn.pos_fc.0.bias torch.Size([8])
+view_crosstrans.1.attn.pos_fc.2.weight torch.Size([64, 8])
+view_crosstrans.1.attn.pos_fc.2.bias torch.Size([64])
+view_crosstrans.1.attn.attn_fc.0.weight torch.Size([8, 64])
+view_crosstrans.1.attn.attn_fc.0.bias torch.Size([8])
+view_crosstrans.1.attn.attn_fc.2.weight torch.Size([64, 8])
+view_crosstrans.1.attn.attn_fc.2.bias torch.Size([64])
+view_crosstrans.1.attn.out_fc.weight torch.Size([64, 64])
+view_crosstrans.1.attn.out_fc.bias torch.Size([64])
+view_crosstrans.2.attn_norm.weight torch.Size([64])
+view_crosstrans.2.attn_norm.bias torch.Size([64])
+view_crosstrans.2.ff_norm.weight torch.Size([64])
+view_crosstrans.2.ff_norm.bias torch.Size([64])
+view_crosstrans.2.ff.fc1.weight torch.Size([256, 64])
+view_crosstrans.2.ff.fc1.bias torch.Size([256])
+view_crosstrans.2.ff.fc2.weight torch.Size([64, 256])
+view_crosstrans.2.ff.fc2.bias torch.Size([64])
+view_crosstrans.2.attn.q_fc.weight torch.Size([64, 64])
+view_crosstrans.2.attn.k_fc.weight torch.Size([64, 64])
+view_crosstrans.2.attn.v_fc.weight torch.Size([64, 64])
+view_crosstrans.2.attn.pos_fc.0.weight torch.Size([8, 4])
+view_crosstrans.2.attn.pos_fc.0.bias torch.Size([8])
+view_crosstrans.2.attn.pos_fc.2.weight torch.Size([64, 8])
+view_crosstrans.2.attn.pos_fc.2.bias torch.Size([64])
+view_crosstrans.2.attn.attn_fc.0.weight torch.Size([8, 64])
+view_crosstrans.2.attn.attn_fc.0.bias torch.Size([8])
+view_crosstrans.2.attn.attn_fc.2.weight torch.Size([64, 8])
+view_crosstrans.2.attn.attn_fc.2.bias torch.Size([64])
+view_crosstrans.2.attn.out_fc.weight torch.Size([64, 64])
+view_crosstrans.2.attn.out_fc.bias torch.Size([64])
+view_crosstrans.3.attn_norm.weight torch.Size([64])
+view_crosstrans.3.attn_norm.bias torch.Size([64])
+view_crosstrans.3.ff_norm.weight torch.Size([64])
+view_crosstrans.3.ff_norm.bias torch.Size([64])
+view_crosstrans.3.ff.fc1.weight torch.Size([256, 64])
+view_crosstrans.3.ff.fc1.bias torch.Size([256])
+view_crosstrans.3.ff.fc2.weight torch.Size([64, 256])
+view_crosstrans.3.ff.fc2.bias torch.Size([64])
+view_crosstrans.3.attn.q_fc.weight torch.Size([64, 64])
+view_crosstrans.3.attn.k_fc.weight torch.Size([64, 64])
+view_crosstrans.3.attn.v_fc.weight torch.Size([64, 64])
+view_crosstrans.3.attn.pos_fc.0.weight torch.Size([8, 4])
+view_crosstrans.3.attn.pos_fc.0.bias torch.Size([8])
+view_crosstrans.3.attn.pos_fc.2.weight torch.Size([64, 8])
+view_crosstrans.3.attn.pos_fc.2.bias torch.Size([64])
+view_crosstrans.3.attn.attn_fc.0.weight torch.Size([8, 64])
+view_crosstrans.3.attn.attn_fc.0.bias torch.Size([8])
+view_crosstrans.3.attn.attn_fc.2.weight torch.Size([64, 8])
+view_crosstrans.3.attn.attn_fc.2.bias torch.Size([64])
+view_crosstrans.3.attn.out_fc.weight torch.Size([64, 64])
+view_crosstrans.3.attn.out_fc.bias torch.Size([64])
+q_fcs.0.0.weight torch.Size([64, 190])
+q_fcs.0.0.bias torch.Size([64])
+q_fcs.0.2.weight torch.Size([64, 64])
+q_fcs.0.2.bias torch.Size([64])
+q_fcs.2.0.weight torch.Size([64, 190])
+q_fcs.2.0.bias torch.Size([64])
+q_fcs.2.2.weight torch.Size([64, 64])
+q_fcs.2.2.bias torch.Size([64])
+norm.weight torch.Size([64])
+norm.bias torch.Size([64])
+rgb_fc.weight torch.Size([3, 64])
+rgb_fc.bias torch.Size([3])
+Reloading from ./out/pretrained/model_250000.pth, starting at step=250000
+val/psnr_image:  32.155591777091416
+val/lpips_image:  0.024417854845523834
+val/ssim_image:  0.9733554720878601
+val/psnr_image:  30.24661173225528
+val/lpips_image:  0.03189871087670326
+val/ssim_image:  0.9620619416236877
+val/psnr_image:  33.61492944822629
+val/lpips_image:  0.0190232302993536
+val/ssim_image:  0.9779030084609985
+val/psnr_image:  34.57577451750775
+val/lpips_image:  0.01598202809691429
+val/ssim_image:  0.9833727478981018
+val/psnr_image:  29.23004394778843
+val/lpips_image:  0.04272647574543953
+val/ssim_image:  0.9547212719917297
+val/psnr_image:  33.656861813187916
+val/lpips_image:  0.023759452626109123
+val/ssim_image:  0.9777830839157104
+val/psnr_image:  32.66655026272768
+val/lpips_image:  0.03007582761347294
+val/ssim_image:  0.9719112515449524
+val/psnr_image:  28.60926376119633
+val/lpips_image:  0.05349937453866005
+val/ssim_image:  0.9489321112632751
+val/psnr_image:  29.03970893722631
+val/lpips_image:  0.043993961066007614
+val/ssim_image:  0.9529722929000854
+val/psnr_image:  30.078435079140288
+val/lpips_image:  0.03082924149930477
+val/ssim_image:  0.9690570831298828
+val/psnr_image:  31.07487553681186
+val/lpips_image:  0.031924426555633545
+val/ssim_image:  0.96490877866745
+val/psnr_image:  35.108797114411
+val/lpips_image:  0.020486455410718918
+val/ssim_image:  0.9796537160873413
+val/psnr_image:  28.602134969579286
+val/lpips_image:  0.04936691373586655
+val/ssim_image:  0.9495345950126648
+Average PSNR:  31.43535222285768
+Average LPIPS:  0.03215261176228523
+Average SSIM:  0.966628258044903

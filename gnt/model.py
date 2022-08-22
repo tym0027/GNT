@@ -141,8 +141,52 @@ class GNTModel(object):
         if load_scheduler:
             self.scheduler.load_state_dict(to_load["scheduler"])
 
-        self.net_coarse.load_state_dict(to_load["net_coarse"])
+
         self.feature_net.load_state_dict(to_load["feature_net"])
+        
+        intermediary_sd = self.net_coarse.state_dict()
+
+        for item in intermediary_sd.keys():
+            print(item, intermediary_sd[item].shape)
+        print()
+        for item in to_load["net_coarse"].keys():
+            print(item, to_load["net_coarse"][item].shape)
+        
+        # i = 0
+        for item in intermediary_sd.keys():
+            # NOTE: copy weights into model with programtic name edits...            
+            if "view_trans" in item:
+                new_name = item.replace("view_trans", "view_crosstrans")
+                intermediary_sd[item] = to_load["net_coarse"][new_name]
+            elif "ray_trans" in item:
+                new_name = item.replace("ray_trans", "view_selftrans")
+                intermediary_sd[item] = to_load["net_coarse"][new_name]
+            else:
+                intermediary_sd[item] = to_load["net_coarse"][item]
+            
+
+            # NOTE: manually copy weights into model...
+            '''
+            print("Object ", item, intermediary_sd[item].shape, " in model corresponds to: ")
+            new_name = input('-->')
+            try:
+                intermediary_sd[item] = to_load["net_coarse"][new_name]
+            except:
+                print("\tModel layer import failed!!! Size of ", intermediary_sd[item].shape, "\n\tdoes not fit with size of ", to_load["feature_net"][new_name].shape)
+                print()
+            '''
+            
+            # NOTE: hope the weights correspond when ordered...
+            
+            # old_keys = list(to_load["net_coarse"].keys())
+            # intermediary_sd[item] = to_load["net_coarse"][old_keys[i]]
+            # i = i + 1
+        
+        self.net_coarse.load_state_dict(intermediary_sd)
+
+        torch.save(self.net_coarse.state_dict(), "./converted_model.pth")
+        # self.net_coarse.load_state_dict(to_load["net_coarse"])
+        # self.feature_net.load_state_dict(to_load["feature_net"])
 
         if self.net_fine is not None and "net_fine" in to_load.keys():
             self.net_fine.load_state_dict(to_load["net_fine"])

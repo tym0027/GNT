@@ -184,7 +184,7 @@ def log_view(
         rgb_fine = None
         depth_fine = None
 
-    rgb_coarse = rgb_coarse.permute(1, 2, 0).detach().cpu().numpy()
+    rgb_coarse = rgb_coarse.permute(1, 2, 0).detach().cpu().numpy().astype(np.uint8)
     filename = os.path.join(out_folder, prefix[:-1] + "_{:03d}_coarse.png".format(global_step))
     imageio.imwrite(filename, rgb_coarse)
 
@@ -196,12 +196,12 @@ def log_view(
         imageio.imwrite(filename, depth_coarse)
 
     if rgb_fine is not None:
-        rgb_fine = rgb_fine.permute(1, 2, 0).detach().cpu().numpy()
+        rgb_fine = rgb_fine.permute(1, 2, 0).detach().cpu().numpy().astype(np.uint8)
         filename = os.path.join(out_folder, prefix[:-1] + "_{:03d}_fine.png".format(global_step))
         imageio.imwrite(filename, rgb_fine)
 
     if depth_fine is not None:
-        depth_fine = depth_fine.permute(1, 2, 0).detach().cpu().numpy()
+        depth_fine = depth_fine.permute(1, 2, 0).detach().cpu().numpy().astype(np.uint8)
         filename = os.path.join(
             out_folder, prefix[:-1] + "_{:03d}_fine_depth.png".format(global_step)
         )
