@@ -6,7 +6,7 @@ import os
 from gnt.single_model_transformer_network import GNT
 from gnt.feature_network import ResUNet
 
-from gnt.render_ray import sample_along_camera_ray
+from gnt.single_model_render_ray import sample_along_camera_ray
 
 from gnt.projection import Projector
 from utils import img_HWC2CHW
@@ -112,13 +112,15 @@ class GNTWrapper(nn.Module):
             pts, z_vals = sample_along_camera_ray(
                 ray_o=ray_o,
                 ray_d=ray_d,
-                depth_range=ray_batch["depth_range"],
+                depth_range=depth_range,
                 N_samples=N_samples,
-                inv_uniform=inv_uniform,
-                det=det,
             )
 
             N_rays, N_samples = pts.shape[:2]
+
+            # TODO: Inference gets to here before erroring on projector.compute being undefined
+            # it was originally passed in as a function argument.
+
             rgb_feat, ray_diff, mask = projector.compute(
                 pts,
                 ray_batch["camera"],
