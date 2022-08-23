@@ -3,12 +3,16 @@ import numpy as np
 import torch.nn as nn
 
 import os
-from gnt.transformer_network import GNT
+from gnt.single_model_transformer_network import GNT
 from gnt.feature_network import ResUNet
+
+from gnt.render_ray import sample_along_camera_ray
 
 from gnt.projection import Projector
 from utils import img_HWC2CHW
 from gnt.render_image import render_single_image
+
+from collections import OrderedDict
 
 
 def de_parallel(model):
@@ -18,42 +22,28 @@ def de_parallel(model):
 # creation/saving/loading of nerf
 ########################################################################################################################
 
-class GNTWrapper(nn.Module)
-   def __init__(self, net_coarse_in_feat_ch):
-       super(GNTWrapper, self).__init__() 
-       self.net_coarse = GNT(
-            args,
+class GNTWrapper(nn.Module):
+    # self.args.coarse_feat_dim, self.args.fine_feat_dim, self.args.single_net, self.args.netwidth, self.args.trans_depth
+    def __init__(self, coarse_feat_dim, fine_feat_dim, netwidth, trans_depth):
+        super(GNTWrapper, self).__init__() 
+         
+        self.net_coarse = GNT(netwidth, trans_depth,
+            # args,
             # in_feat_ch=self.args.coarse_feat_dim,
-            in_feat_ch=net_coarse_in_feat_ch,
+            in_feat_ch=coarse_feat_dim,
             posenc_dim=3 + 3 * 2 * 10,
             viewenc_dim=3 + 3 * 2 * 10,
-            ret_alpha=args.N_importance > 0,
+            # ret_alpha=N_importance > 0, ---> FALSE
         )
-
         # create feature extraction network
-        self.feature_net = ResUNet(
-            coarse_out_ch=self.args.coarse_feat_dim,
-            fine_out_ch=self.args.fine_feat_dim,
-            single_net=self.args.single_net,
-        ).to(device)
-
+        self.feature_net = ResUNet(coarse_out_ch=coarse_feat_dim, fine_out_ch=fine_feat_dim).to("cuda:0") # Single_net -> TRUE
+         
         # init empty module for potential future use/dev
         self.net_fine = None 
 
-    def forward(self, rgb, camera, src_rgbs, src_cameras, depth_range):
-        data["rgb"] = rgb
-        data["camera"] = camera
-        data["src_rgbs"] = src_rgbs
-        data["src_cameras"] = src_cameras
-        data["depth_range"] = depth_range
-
-        tmp_ray_sampler = RaySamplerSingleImage(data, device, render_stride=args.render_stride)
-        H, W = tmp_ray_sampler.H, tmp_ray_sampler.W
-        gt_img = tmp_ray_sampler.rgb.reshape(H, W, 3)
-        
-        ray_batch = ray_sampler.get_all()
-        featmaps = model.feature_net(src_rgbs.squeeze(0).permute(0, 3, 1, 2))
-
+    def forward(self, src_rgbs, ray_sampler_H, ray_sampler_W, ray_o, ray_d, camera, depth_range, src_cameras, chunk_size, N_samples, N_importance, render_stride):
+        featmaps = self.feature_net(src_rgbs)
+        '''
         ret = render_single_image(
             ray_sampler=ray_sampler,
             ray_batch=ray_batch,
@@ -70,17 +60,156 @@ class GNTWrapper(nn.Module)
             ret_alpha=ret_alpha,
             single_net=single_net,
         )
-
-        ''' post?
-        average_im = ray_sampler.src_rgbs.cpu().mean(dim=(0, 1))
-
-        if args.render_stride != 1:
-            # gt_img = gt_img[::render_stride, ::render_stride]
-            average_im = average_im[::render_stride, ::render_stride]
-
-        # rgb_gt = img_HWC2CHW(gt_img)
-        average_im = img_HWC2CHW(average_im)
         '''
+        ### original inputs ray_sampler=ray_sampler, ray_batch=ray_batch, model=model, projector=projector, chunk_size=args.chunk_size, N_samples=args.N_samples, inv_uniform=args.inv_uniform, det=True, N_importance=args.N_importance, white_bkgd=args.white_bkgd, render_stride=render_stride, featmaps=featmaps, ret_alpha=ret_alpha, single_net=single_net
+
+        ### New Inputs     : ray_sampler.H, ray_sampler.W, ray_batch["ray_o"], camera, depth_range, src_rgbs, src_cameras, NO_MODEL, NO_PROJECTOR(?), chunk_size, N_samples, N_importance, render_stride,  
+
+        all_ret = OrderedDict([("outputs_coarse", OrderedDict()), ("outputs_fine", OrderedDict())])
+
+        # N_rays = ray_batch["ray_o"].shape[0]
+        N_rays = ray_o.shape[0]
+
+        # TODO after porting render_rays in to this forward function rewrite this for loop
+        for i in range(0, N_rays, chunk_size):
+            chunk = OrderedDict()
+            '''
+            for k in ray_batch:
+                if k in ["camera", "depth_range", "src_rgbs", "src_cameras"]:
+                    chunk[k] = ray_batch[k]
+                elif ray_batch[k] is not None:
+                    chunk[k] = ray_batch[k][i : i + chunk_size]
+                else:
+                    chunk[k] = None
+            '''
+
+            chunk["camera"] = camera
+            chunk["depth_range"] = depth_range
+            chunk["src_rgbs"] = src_rgbs
+            chunk["src_cameras"] = src_cameras
+
+            '''
+            ret = render_rays(
+            chunk,
+            model,
+            featmaps,
+            projector=projector,
+            N_samples=N_samples,
+            inv_uniform=inv_uniform,
+            N_importance=N_importance,
+            det=det,
+            white_bkgd=white_bkgd,
+            ret_alpha=ret_alpha,
+            single_net=single_net,
+            )
+            '''
+
+            ret = {"outputs_coarse": None, "outputs_fine": None}
+            # ray_o, ray_d = ray_batch["ray_o"], ray_batch["ray_d"]
+
+            # pts: [N_rays, N_samples, 3]
+            # z_vals: [N_rays, N_samples]
+            pts, z_vals = sample_along_camera_ray(
+                ray_o=ray_o,
+                ray_d=ray_d,
+                depth_range=ray_batch["depth_range"],
+                N_samples=N_samples,
+                inv_uniform=inv_uniform,
+                det=det,
+            )
+
+            N_rays, N_samples = pts.shape[:2]
+            rgb_feat, ray_diff, mask = projector.compute(
+                pts,
+                ray_batch["camera"],
+                ray_batch["src_rgbs"],
+                ray_batch["src_cameras"],
+                featmaps=featmaps[0],
+            )
+
+            rgb = model.net_coarse(rgb_feat, ray_diff, mask, pts, ray_d)
+            if ret_alpha:
+                rgb, weights = rgb[:, 0:3], rgb[:, 3:]
+                depth_map = torch.sum(weights * z_vals, dim=-1)
+            else:
+                weights = None
+                depth_map = None
+            ret["outputs_coarse"] = {"rgb": rgb, "weights": weights, "depth": depth_map}
+
+            if N_importance > 0:
+                # detach since we would like to decouple the coarse and fine networks
+                weights = ret["outputs_coarse"]["weights"].clone().detach()  # [N_rays, N_samples]
+                pts, z_vals = sample_fine_pts(
+                    inv_uniform, N_importance, det, N_samples, ray_batch, weights, z_vals
+                )
+
+                rgb_feat_sampled, ray_diff, mask = projector.compute(
+                    pts,
+                    ray_batch["camera"],
+                    ray_batch["src_rgbs"],
+                    ray_batch["src_cameras"],
+                    featmaps=featmaps[1],
+                )
+
+                # TODO: Include pixel mask in ray transformer
+                # pixel_mask = (
+                #     mask[..., 0].sum(dim=2) > 1
+                # )  # [N_rays, N_samples]. should at least have 2 observations
+
+                if single_net:
+                    rgb = model.net_coarse(rgb_feat_sampled, ray_diff, mask, pts, ray_d)
+                else:
+                    rgb = model.net_fine(rgb_feat_sampled, ray_diff, mask, pts, ray_d)
+                rgb, weights = rgb[:, 0:3], rgb[:, 3:]
+                depth_map = torch.sum(weights * z_vals, dim=-1)
+                ret["outputs_fine"] = {"rgb": rgb, "weights": weights, "depth": depth_map}
+
+
+            # handle both coarse and fine outputs
+            # cache chunk results on cpu
+            if i == 0:
+                for k in ret["outputs_coarse"]:
+                    if ret["outputs_coarse"][k] is not None:
+                        all_ret["outputs_coarse"][k] = []
+
+                if ret["outputs_fine"] is None:
+                    all_ret["outputs_fine"] = None
+                else:
+                    for k in ret["outputs_fine"]:
+                        if ret["outputs_fine"][k] is not None:
+                            all_ret["outputs_fine"][k] = []
+
+            for k in ret["outputs_coarse"]:
+                if ret["outputs_coarse"][k] is not None:
+                    all_ret["outputs_coarse"][k].append(ret["outputs_coarse"][k].cpu())
+
+            if ret["outputs_fine"] is not None:
+                for k in ret["outputs_fine"]:
+                    if ret["outputs_fine"][k] is not None:
+                        all_ret["outputs_fine"][k].append(ret["outputs_fine"][k].cpu())
+
+        rgb_strided = torch.ones(ray_sampler_H, ray_sampler_W, 3)[::render_stride, ::render_stride, :]
+        # merge chunk results and reshape
+        for k in all_ret["outputs_coarse"]:
+            if k == "random_sigma":
+                continue
+            tmp = torch.cat(all_ret["outputs_coarse"][k], dim=0).reshape(
+                (rgb_strided.shape[0], rgb_strided.shape[1], -1))
+        
+            all_ret["outputs_coarse"][k] = tmp.squeeze()
+
+        # TODO: if invalid: replace with white
+        # all_ret["outputs_coarse"]["rgb"][all_ret["outputs_coarse"]["mask"] == 0] = 1.0
+        if all_ret["outputs_fine"] is not None:
+            for k in all_ret["outputs_fine"]:
+                if k == "random_sigma":
+                    continue
+                tmp = torch.cat(all_ret["outputs_fine"][k], dim=0).reshape(
+                    (rgb_strided.shape[0], rgb_strided.shape[1], -1))
+
+                all_ret["outputs_fine"][k] = tmp.squeeze()
+
+        return all_ret
         
 
 
@@ -91,7 +220,7 @@ class GNTModel(object):
         
         # NOTE: Define networks...
 
-        self.gntwrapper = GNTWrapper(self.args.coarse_feat_dim, self.args.fine_feat_dim, self.args.single_net, netwidth, trans_depth)
+        self.gntwrapper = GNTWrapper(self.args.coarse_feat_dim, self.args.fine_feat_dim, self.args.netwidth, self.args.trans_depth)
 
         '''
         # create coarse GNT

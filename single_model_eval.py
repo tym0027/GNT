@@ -7,8 +7,8 @@ import torch.utils.data.distributed
 from torch.utils.data import DataLoader
 
 from gnt.data_loaders import dataset_dict
-from gnt.render_image import render_single_image
-from gnt.model import GNTModel
+# from gnt.render_image import render_single_image
+from gnt.single_model import GNTModel
 from gnt.sample_ray import RaySamplerSingleImage
 from utils import img_HWC2CHW, colorize, img2psnr, lpips, ssim
 import config
@@ -84,7 +84,7 @@ def eval(args):
     )
     
     # create projector
-    # projector = Projector(device=device)
+    projector = Projector(device=device)
 
     indx = 0
     psnr_scores = []
@@ -93,18 +93,14 @@ def eval(args):
     while True:
         try:
             data = next(iterator)
-            del data['rgb_path']
         except:
             break
         if args.local_rank == 0:
             
-            model.gntwrapper.forward(data)
-
-
-            '''
             tmp_ray_sampler = RaySamplerSingleImage(data, device, render_stride=args.render_stride)
             H, W = tmp_ray_sampler.H, tmp_ray_sampler.W
             gt_img = tmp_ray_sampler.rgb.reshape(H, W, 3)
+            
             psnr_curr_img, lpips_curr_img, ssim_curr_img = log_view(
                 indx,
                 args,
@@ -118,7 +114,7 @@ def eval(args):
                 ret_alpha=args.N_importance > 0,
                 single_net=args.single_net,
             )
-            '''
+            
             psnr_scores.append(psnr_curr_img)
             lpips_scores.append(lpips_curr_img)
             ssim_scores.append(ssim_curr_img)
@@ -146,10 +142,28 @@ def log_view(
     model.switch_to_eval()
     with torch.no_grad():
         ray_batch = ray_sampler.get_all()
+        # NOTE: from render_single_image:
+        # self, src_rgbs, ray_sampler_H, ray_sampler_W, ray_o, camera, depth_range, src_cameras, chunk_size, N_samples, N_importance, render_stride
+        print(ray_batch["src_rgbs"].squeeze(0).shape)
+        src_rgbs = ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2)
+        print(src_rgbs.shape)
+        ret = model.gntwrapper.forward(src_rgbs, 
+                                       ray_sampler.H, ray_sampler.W,
+                                       ray_batch["ray_o"],
+                                       ray_batch["ray_d"],
+                                       ray_batch["camera"], 
+                                       ray_batch["depth_range"],
+                                       ray_batch["src_cameras"],
+                                       args.chunk_size,
+                                       args.N_samples,
+                                       args.N_importance,
+                                       render_stride)
+        '''
         if model.feature_net is not None:
             featmaps = model.feature_net(ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2))
         else:
             featmaps = [None, None]
+
         ret = render_single_image(
             ray_sampler=ray_sampler,
             ray_batch=ray_batch,
@@ -166,7 +180,7 @@ def log_view(
             ret_alpha=ret_alpha,
             single_net=single_net,
         )
-
+        '''
     average_im = ray_sampler.src_rgbs.cpu().mean(dim=(0, 1))
 
     if args.render_stride != 1:
