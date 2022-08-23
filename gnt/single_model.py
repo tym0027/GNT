@@ -7,8 +7,9 @@ from gnt.single_model_transformer_network import GNT
 from gnt.feature_network import ResUNet
 
 from gnt.single_model_render_ray import sample_along_camera_ray
+from gnt.single_model_projection import *
 
-from gnt.projection import Projector
+# from gnt.projection import Projector
 from utils import img_HWC2CHW
 from gnt.render_image import render_single_image
 
@@ -41,8 +42,15 @@ class GNTWrapper(nn.Module):
         # init empty module for potential future use/dev
         self.net_fine = None 
 
-    def forward(self, src_rgbs, ray_sampler_H, ray_sampler_W, ray_o, ray_d, camera, depth_range, src_cameras, chunk_size, N_samples, N_importance, render_stride):
-        featmaps = self.feature_net(src_rgbs)
+    def forward(self, src_rgbs, rgb, ray_sampler_H, ray_sampler_W, ray_o, ray_d, camera, depth_range, src_cameras, chunk_size, N_samples, N_importance, render_stride=None):
+
+        print(src_rgbs.shape)
+        print(src_rgbs.squeeze(0).permute(0, 3, 1, 2).shape)
+        featmaps = self.feature_net(src_rgbs.squeeze(0).permute(0, 3, 1, 2))
+        print(src_rgbs.shape)
+
+        ret_alpha = False
+
         '''
         ret = render_single_image(
             ray_sampler=ray_sampler,
@@ -71,6 +79,7 @@ class GNTWrapper(nn.Module):
         N_rays = ray_o.shape[0]
 
         # TODO after porting render_rays in to this forward function rewrite this for loop
+        print("chunk for loop: ", N_rays, chunk_size)
         for i in range(0, N_rays, chunk_size):
             chunk = OrderedDict()
             '''
@@ -87,6 +96,9 @@ class GNTWrapper(nn.Module):
             chunk["depth_range"] = depth_range
             chunk["src_rgbs"] = src_rgbs
             chunk["src_cameras"] = src_cameras
+            chunk["ray_o"] = ray_o[i:i + chunk_size] 
+            chunk["ray_d"] = ray_d[i:i + chunk_size] 
+            chunk["rgb"] = rgb[i:i + chunk_size]           
 
             '''
             ret = render_rays(
@@ -110,8 +122,10 @@ class GNTWrapper(nn.Module):
             # pts: [N_rays, N_samples, 3]
             # z_vals: [N_rays, N_samples]
             pts, z_vals = sample_along_camera_ray(
-                ray_o=ray_o,
-                ray_d=ray_d,
+                # ray_o=ray_o,
+                # ray_d=ray_d,
+                ray_o=chunk["ray_o"],
+                ray_d=chunk["ray_d"],
                 depth_range=depth_range,
                 N_samples=N_samples,
             )
@@ -120,16 +134,29 @@ class GNTWrapper(nn.Module):
 
             # TODO: Inference gets to here before erroring on projector.compute being undefined
             # it was originally passed in as a function argument.
-
-            rgb_feat, ray_diff, mask = projector.compute(
+            '''
+            rgb_feat, ray_diff, mask = projector_compute(
                 pts,
                 ray_batch["camera"],
                 ray_batch["src_rgbs"],
                 ray_batch["src_cameras"],
                 featmaps=featmaps[0],
             )
+            '''
+            print(featmaps[0].shape)
+            rgb_feat, ray_diff, mask = projector_compute(
+                pts,
+                chunk["camera"],
+                chunk["src_rgbs"],
+                chunk["src_cameras"],
+                featmaps=featmaps[0],
+            )
+            rgb_feat = rgb_feat.cuda()
+            ray_diff = ray_diff.cuda()
 
-            rgb = model.net_coarse(rgb_feat, ray_diff, mask, pts, ray_d)
+            # rgb = self.net_coarse(rgb_feat.cuda(), ray_diff.cuda(), mask.cuda(), pts.cuda(), chunk["ray_d"].cuda())
+            rgb = self.net_coarse(rgb_feat, ray_diff, mask, pts, chunk["ray_d"])
+            print(rgb.shape, z_vals.shape)
             if ret_alpha:
                 rgb, weights = rgb[:, 0:3], rgb[:, 3:]
                 depth_map = torch.sum(weights * z_vals, dim=-1)
@@ -222,7 +249,7 @@ class GNTModel(object):
         
         # NOTE: Define networks...
 
-        self.gntwrapper = GNTWrapper(self.args.coarse_feat_dim, self.args.fine_feat_dim, self.args.netwidth, self.args.trans_depth)
+        self.gntwrapper = GNTWrapper(self.args.coarse_feat_dim, self.args.fine_feat_dim, self.args.netwidth, self.args.trans_depth).to(device)
 
         '''
         # create coarse GNT

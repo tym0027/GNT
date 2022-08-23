@@ -144,10 +144,13 @@ def log_view(
         ray_batch = ray_sampler.get_all()
         # NOTE: from render_single_image:
         # self, src_rgbs, ray_sampler_H, ray_sampler_W, ray_o, camera, depth_range, src_cameras, chunk_size, N_samples, N_importance, render_stride
-        print(ray_batch["src_rgbs"].squeeze(0).shape)
-        src_rgbs = ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2)
-        print(src_rgbs.shape)
-        ret = model.gntwrapper.forward(src_rgbs, 
+        # print(ray_batch["src_rgbs"].squeeze(0).shape)
+        # src_rgbs = ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2)
+        # print(src_rgbs.shape)
+        # src_rgbs = ray_batch["src_rgbs"]
+        print(ray_batch.keys())
+        ret = model.gntwrapper.forward(ray_batch["src_rgbs"],
+                                       ray_batch["rgb"], 
                                        ray_sampler.H, ray_sampler.W,
                                        ray_batch["ray_o"],
                                        ray_batch["ray_d"],
@@ -157,7 +160,7 @@ def log_view(
                                        args.chunk_size,
                                        args.N_samples,
                                        args.N_importance,
-                                       render_stride)
+                                       render_stride=render_stride)
         '''
         if model.feature_net is not None:
             featmaps = model.feature_net(ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2))

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=2-00:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name=truppr20220811
 #SBATCH --partition=ce-mri
 #SBATCH --gres=gpu:a100:1
