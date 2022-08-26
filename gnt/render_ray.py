@@ -230,7 +230,10 @@ def render_rays(
         det=det,
     )
 
+    # torch.save(pts, "./onnx_args/pts.pt")
+
     N_rays, N_samples = pts.shape[:2]
+    print("featmaps: ", featmaps[0].shape)
     rgb_feat, ray_diff, mask = projector.compute(
         pts,
         ray_batch["camera"],
@@ -242,8 +245,13 @@ def render_rays(
     # pixel_mask = (
     #     mask[..., 0].sum(dim=2) > 1
     # )  # [N_rays, N_samples], should at least have 2 observations
+    # torch.save(rgb_feat, "./onnx_args/rgb_feat.pt")
+    # torch.save(ray_diff, "./onnx_args/ray_diff.pt")
+    # torch.save(mask, "./onnx_args/mask.pt")
+    # exit()
 
     rgb = model.net_coarse(rgb_feat, ray_diff, mask, pts, ray_d)
+    print(rgb.shape, z_vals.shape, ret_alpha)
     if ret_alpha:
         rgb, weights = rgb[:, 0:3], rgb[:, 3:]
         depth_map = torch.sum(weights * z_vals, dim=-1)

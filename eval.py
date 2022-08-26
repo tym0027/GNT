@@ -95,6 +95,10 @@ def eval(args):
         except:
             break
         if args.local_rank == 0:
+            #print(data.keys())
+            #print(type(data["rgb"]), type(data["camera"]), type(data["rgb_path"]), type(data["src_rgbs"]), type(data["src_cameras"]), type(data["depth_range"]))
+            #print(data["rgb_path"])
+            #print()
             tmp_ray_sampler = RaySamplerSingleImage(data, device, render_stride=args.render_stride)
             H, W = tmp_ray_sampler.H, tmp_ray_sampler.W
             gt_img = tmp_ray_sampler.rgb.reshape(H, W, 3)

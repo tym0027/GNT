@@ -41,9 +41,13 @@ class Projector:
         train_intrinsics = train_cameras[:, 2:18].reshape(-1, 4, 4)  # [n_views, 4, 4]
         train_poses = train_cameras[:, -16:].reshape(-1, 4, 4)  # [n_views, 4, 4]
         xyz_h = torch.cat([xyz, torch.ones_like(xyz[..., :1])], dim=-1)  # [n_points, 4]
+
+
         projections = train_intrinsics.bmm(torch.inverse(train_poses)).bmm(
             xyz_h.t()[None, ...].repeat(num_views, 1, 1)
         )  # [n_views, 4, n_points]
+        
+
         projections = projections.permute(0, 2, 1)  # [n_views, n_points, 4]
         pixel_locations = projections[..., :2] / torch.clamp(
             projections[..., 2:3], min=1e-8
@@ -92,6 +96,8 @@ class Projector:
                  ray_diff: [n_rays, n_samples, 4],
                  mask: [n_rays, n_samples, 1]
         """
+        print("Projection: ", train_imgs.shape, train_cameras.shape, query_camera.shape, featmaps.shape)
+        print()
         assert (
             (train_imgs.shape[0] == 1)
             and (train_cameras.shape[0] == 1)
@@ -105,7 +111,7 @@ class Projector:
         train_imgs = train_imgs.permute(0, 3, 1, 2)  # [n_views, 3, h, w]
 
         h, w = train_cameras[0][:2]
-
+        print("\nH,W: ", h, w)
         # compute the projection of the query points to each reference image
         pixel_locations, mask_in_front = self.compute_projections(xyz, train_cameras)
         normalized_pixel_locations = self.normalize(
@@ -117,6 +123,7 @@ class Projector:
         rgb_sampled = rgbs_sampled.permute(2, 3, 0, 1)  # [n_rays, n_samples, n_views, 3]
 
         # deep feature sampling
+        print("\ndeep features: ", featmaps.shape, normalized_pixel_locations.shape)
         feat_sampled = F.grid_sample(featmaps, normalized_pixel_locations, align_corners=True)
         feat_sampled = feat_sampled.permute(2, 3, 0, 1)  # [n_rays, n_samples, n_views, d]
         rgb_feat_sampled = torch.cat(

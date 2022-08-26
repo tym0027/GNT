@@ -93,15 +93,17 @@ class GNTModel(object):
 
         if args.onnx and args.coreml:
             self.feature_net.onnx_export()
-            self.feature_net.coreml_export()
+            # self.feature_net.coreml_export()
             exit()
 
         elif args.onnx:
+            print("Onnx only!")
             self.feature_net.onnx_export()
+            self.net_coarse.onnx_export()
             exit()
 
         elif args.coreml:
-            self.feature_net.coreml_export()
+            # self.feature_net.coreml_export()
             exit()
 
     def switch_to_eval(self):
@@ -145,24 +147,27 @@ class GNTModel(object):
         self.feature_net.load_state_dict(to_load["feature_net"])
         
         intermediary_sd = self.net_coarse.state_dict()
-
+        '''
         for item in intermediary_sd.keys():
             print(item, intermediary_sd[item].shape)
         print()
         for item in to_load["net_coarse"].keys():
             print(item, to_load["net_coarse"][item].shape)
-        
+        '''
         # i = 0
-        for item in intermediary_sd.keys():
-            # NOTE: copy weights into model with programtic name edits...            
-            if "view_trans" in item:
-                new_name = item.replace("view_trans", "view_crosstrans")
-                intermediary_sd[item] = to_load["net_coarse"][new_name]
-            elif "ray_trans" in item:
-                new_name = item.replace("ray_trans", "view_selftrans")
-                intermediary_sd[item] = to_load["net_coarse"][new_name]
-            else:
-                intermediary_sd[item] = to_load["net_coarse"][item]
+        try:
+            self.net_coarse.load_state_dict(to_load["net_coarse"])
+        except:
+            for item in intermediary_sd.keys():
+                # NOTE: copy weights into model with programtic name edits...            
+                if "view_trans" in item:
+                    new_name = item.replace("view_trans", "view_crosstrans")
+                    intermediary_sd[item] = to_load["net_coarse"][new_name]
+                elif "ray_trans" in item:
+                    new_name = item.replace("ray_trans", "view_selftrans")
+                    intermediary_sd[item] = to_load["net_coarse"][new_name]
+                else:
+                    intermediary_sd[item] = to_load["net_coarse"][item]
             
 
             # NOTE: manually copy weights into model...
@@ -182,9 +187,9 @@ class GNTModel(object):
             # intermediary_sd[item] = to_load["net_coarse"][old_keys[i]]
             # i = i + 1
         
-        self.net_coarse.load_state_dict(intermediary_sd)
+            self.net_coarse.load_state_dict(intermediary_sd)
 
-        torch.save(self.net_coarse.state_dict(), "./converted_model.pth")
+            torch.save(self.net_coarse.state_dict(), "./converted_model.pth")
         # self.net_coarse.load_state_dict(to_load["net_coarse"])
         # self.feature_net.load_state_dict(to_load["feature_net"])
 

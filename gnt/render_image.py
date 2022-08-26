@@ -39,10 +39,13 @@ def render_single_image(
         for k in ray_batch:
             if k in ["camera", "depth_range", "src_rgbs", "src_cameras"]:
                 chunk[k] = ray_batch[k]
+                print("chunk[", k, "] = ray_batch[k], ", ray_batch[k].shape)
             elif ray_batch[k] is not None:
                 chunk[k] = ray_batch[k][i : i + chunk_size]
+                print("chunk[", k, "] = ray_batch[k][", i," : ", i, " + ", chunk_size, "]")
             else:
                 chunk[k] = None
+                print("chunk[k] = None")
 
         ret = render_rays(
             chunk,

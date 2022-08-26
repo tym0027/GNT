@@ -268,7 +268,16 @@ class GNT(nn.Module):
 
     def forward(self, rgb_feat, ray_diff, mask, pts, ray_d):
         # compute positional embeddings
-        # print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
+        '''
+        print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
+        torch.save(pts, "./onnx_args/pts.pt")
+        torch.save(rgb_feat, "./onnx_args/rgb_feat.pt")
+        torch.save(ray_diff, "./onnx_args/ray_diff.pt")
+        torch.save(mask, "./onnx_args/mask.pt")
+        torch.save(ray_d, "./onnx_args/ray_d.pt")
+        exit()
+        '''
+
         viewdirs = ray_d
         viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True)
         viewdirs = torch.reshape(viewdirs, [-1, 3]).float()
@@ -310,28 +319,49 @@ class GNT(nn.Module):
 
 
     def onnx_export(self):
-        print("Onnx save function...")
+        print("Onnx save function (for coarse net)...")
         
-        rgb_feat = torch.randn(10, 3, 800, 800).float().cuda()
-        ray_diff = torch.randn(10, 3, 800, 800).float().cuda()
-        mask = torch.randn(10, 3, 800, 800).float().cuda()
-        pts = torch.randn(10, 3, 800, 800).float().cuda()
-        ray_d = torch.randn(10, 3, 800, 800).float().cuda()
-        # d = torch.randn(160128, 3).cuda()
-        # x = torch.randn(1, 32).cuda().float()
-        # h = torch.randn(1, 31).cuda().float()
-        # bound = 1.0
+        # rgb_feat = torch.randn(10, 3, 800, 800).float().cuda()
+        rgb_feat = torch.load("./onnx_args/rgb_feat.pt")
+        # ray_diff = torch.randn(10, 3, 800, 800).float().cuda()
+        ray_diff = torch.load("./onnx_args/ray_diff.pt")
+        # mask = torch.randn(10, 3, 800, 800).float().cuda()
+        mask = torch.load("./onnx_args/mask.pt")
+        # pts = torch.randn(10, 3, 800, 800).float().cuda()
+        pts = torch.load("./onnx_args/pts.pt")
+        # ray_d = torch.randn(10, 3, 800, 800).float().cuda()
+        ray_d = torch.load("./onnx_args/ray_d.pt")
+        
+        print("Data laoded...\n", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
 
-        # print("onnx shapes: ", x.shape, h.shape)
+        '''
+        src_rgbs = torch.load("./onnx_args/src_rgbs.pt")
+        rgb = torch.load("./onnx_args/rgb.pt")
+        ray_sampler_H = torch.load("./onnx_args/ray_sampler_H.pt")
+        ray_sampler_W = torch.load("./onnx_args/ray_sampler_W.pt")
+        ray_o = torch.load("./onnx_args/ray_o.pt")
+        ray_d = torch.load("./onnx_args/ray_d.pt")
+        camera = torch.load("./onnx_args/camera.pt")
+        depth_range = torch.load("./onnx_args/depth_range.pt")
+        src_cameras = torch.load("./onnx_args/src_cameras.pt")
+        chunk_size = torch.load("./onnx_args/chunk_size.pt")
+        N_samples = torch.load("./onnx_args/N_samples.pt")
+        N_importance = torch.load("./onnx_args/N_importance.pt")
+        render_stride = torch.load("./onnx_args/render_stride.pt")
+        '''
 
         # torch_script_graph, unconvertible_ops = onnx_utils.unconvertible_ops(self, (x,d,bound), opset_version=11)
-        # print(set(unconvertible_ops))
+        inputs = (rgb_feat, ray_diff, mask, pts, ray_d)
 
         torch.onnx.export(self,
-                (x),
-                "feature_network_gnt_nerf.onnx",
+                inputs,
+                "transformer_nerf.onnx",
                 export_params=True,
-                opset_version=11,
-                do_constant_folding=True,
+                opset_version=16,
+                verbose=True,
+                # do_constant_folding=True,
                 input_names = ['rgb_feat', 'ray_diff', 'mask', 'pts', 'ray_d'],
                 output_names = ['outputs'])
+
+        print("Done!")
+

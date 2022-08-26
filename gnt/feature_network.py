@@ -4,7 +4,6 @@ import torch.nn.functional as F
 import torch.onnx
 from torch.onnx import utils as onnx_utils
 import importlib
-import coremltools as ct
 
 def class_for_name(module_name, class_name):
     # load the module, will raise ImportError if module cannot be loaded
@@ -324,7 +323,7 @@ class ResUNet(nn.Module):
         return x_coarse, x_fine
 
     def onnx_export(self):
-        print("Onnx save function...")
+        print("Onnx save function (feature net)...")
 
         x = torch.randn(10, 3, 800, 800).cuda()
         # d = torch.randn(160128, 3).cuda()
@@ -341,11 +340,13 @@ class ResUNet(nn.Module):
                 (x),
                 "feature_network_gnt_nerf.onnx",
                 export_params=True,
-                opset_version=11,
-                do_constant_folding=True,
+                opset_version=16,
+                # do_constant_folding=True,
                 input_names = ['x'],
                 output_names = ['x_coarse', 'x_fine'])
+        print("Done!")
 
+    '''
     def coreml_export(self):
         # model = xxx
         example_input = torch.rand(10, 3, 800, 800, requires_grad=False).cuda()
@@ -355,5 +356,5 @@ class ResUNet(nn.Module):
         model = ct.convert(traced_model, inputs=[ct.ImageType(shape=example_input.shape, channel_first=True)])
         model.save("gnt_coreml.mlmodel")
         print('successfully export coreML')
-        
+    '''    
 
