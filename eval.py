@@ -163,6 +163,8 @@ def log_view(
             single_net=single_net,
         )
 
+    exit() # one itr only...
+
     average_im = ray_sampler.src_rgbs.cpu().mean(dim=(0, 1))
 
     if args.render_stride != 1:

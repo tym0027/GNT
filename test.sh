@@ -10,6 +10,6 @@
 
 # python3 train.py --config configs/gnt_blender.txt --train_scenes chair --eval_scenes chair
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gnt/lib/
-python3 eval.py --expname lr_lego --config configs/gnt_blender.txt --eval_scenes lr_lego --chunk_size 500 --run_val --N_samples 192 --onnx
+python3 eval.py --expname lr_lego --config configs/gnt_blender.txt --eval_scenes lr_lego --chunk_size 500 --run_val --N_samples 192 --onnx --coreml
 # python3 eval.py --eval_scenes drums --expname gnt_drums --chunk_size 500 --run_val --N_samples 192
 

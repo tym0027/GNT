@@ -93,7 +93,10 @@ class GNTModel(object):
 
         if args.onnx and args.coreml:
             self.feature_net.onnx_export()
-            # self.feature_net.coreml_export()
+            self.feature_net.coreml_export()
+            self.net_coarse.onnx_export()
+            self.net_coarse.coreml_export()            
+
             exit()
 
         elif args.onnx:
@@ -103,7 +106,8 @@ class GNTModel(object):
             exit()
 
         elif args.coreml:
-            # self.feature_net.coreml_export()
+            self.feature_net.coreml_export()
+            self.net_coarse.coreml_export()
             exit()
 
     def switch_to_eval(self):

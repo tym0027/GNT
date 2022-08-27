@@ -5,6 +5,9 @@ import torch.onnx
 from torch.onnx import utils as onnx_utils
 import importlib
 
+import coremltools as ct
+
+
 def class_for_name(module_name, class_name):
     # load the module, will raise ImportError if module cannot be loaded
     m = importlib.import_module(module_name)
@@ -288,8 +291,13 @@ class ResUNet(nn.Module):
         diffY = x2.size()[2] - x1.size()[2]
         diffX = x2.size()[3] - x1.size()[3]
 
-        x1 = F.pad(x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
+        # print("skipconnect w/ f.pad...")
+        # print(x1.shape, x2.shape)
 
+        # _x1 = torch.zeros(
+
+        # x1 = F.pad(x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
+        # print(x1.shape, x2.shape)
         # for padding issues, see
         # https://github.com/HaiyongJiang/U-Net-Pytorch-Unstructured-Buggy/commit/0e854509c2cea854e247a9c615f175f76fbb2e3a
         # https://github.com/xiaopeng-liao/Pytorch-UNet/commit/8ebac70e633bac59fc22bb5195e513d5832fb3bd
@@ -299,6 +307,9 @@ class ResUNet(nn.Module):
 
     def forward(self, x):
         # print("feature network: ", x.shape)
+
+        # torch.save(x, "./onnx_args/feature_net_x.pt")
+
         x = self.relu(self.bn1(self.conv1(x)))
 
         x1 = self.layer1(x)
@@ -346,15 +357,27 @@ class ResUNet(nn.Module):
                 output_names = ['x_coarse', 'x_fine'])
         print("Done!")
 
-    '''
     def coreml_export(self):
-        # model = xxx
-        example_input = torch.rand(10, 3, 800, 800, requires_grad=False).cuda()
-        traced_model = torch.jit.trace(self, example_input)
-        # print(traced_model)
-        out = traced_model(example_input)
-        model = ct.convert(traced_model, inputs=[ct.ImageType(shape=example_input.shape, channel_first=True)])
-        model.save("gnt_coreml.mlmodel")
-        print('successfully export coreML')
-    '''    
+        print("starting coreml export (for feature net)...")
+        # x = torch.randn(10, 3, 800, 800).cuda()
+        x = torch.load("./onnx_args/feature_net_x.pt")
 
+        traced_model = torch.jit.trace(self, x)
+
+        out = traced_model(x)
+        model = ct.convert(traced_model, inputs=[ct.TensorType(name="x", shape=x.shape)])
+        model.save("feature_net_coreml.mlmodel")
+        print('successfully export coreML')
+
+        ''' example...
+        x = torch.load("./onnx_args/x.pt").float().cuda()
+        d = torch.load("./onnx_args/d.pt").float().cuda()
+
+        # example_input = (x,d)
+        traced_model = torch.jit.trace(self, [x, d])
+        out = traced_model(x, d)
+        # model = ct.convert(traced_model, inputs=[ct.ImageType(shape=example_input.shape, channel_first=True)])
+        model = ct.convert(traced_model, inputs=[ct.TensorType(name="x", shape=x.shape), ct.TensorType(name="d", shape=x.shape)])
+        model.save("coreml_intant_ngp.mlmodel")
+        print('successfully export coreML')
+        '''
