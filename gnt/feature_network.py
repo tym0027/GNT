@@ -336,7 +336,8 @@ class ResUNet(nn.Module):
     def onnx_export(self):
         print("Onnx save function (feature net)...")
 
-        x = torch.randn(10, 3, 800, 800).cuda()
+        # x = torch.randn(10, 3, 800, 800).cuda()
+        x = torch.randn(1 , 3, 800, 800).float().cuda()
         # d = torch.randn(160128, 3).cuda()
         # x = torch.randn(1, 32).cuda().float()
         # h = torch.randn(1, 31).cuda().float()
