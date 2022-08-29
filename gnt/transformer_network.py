@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+import time
+
 # sin-cose embedding module
 class Embedder(nn.Module):
     def __init__(self, **kwargs):
@@ -266,6 +268,9 @@ class GNT(nn.Module):
             periodic_fns=[torch.sin, torch.cos],
         )
 
+        self.timers = []
+
+
     def forward(self, rgb_feat, ray_diff, mask, pts, ray_d):
         # compute positional embeddings
         '''
@@ -277,7 +282,9 @@ class GNT(nn.Module):
         torch.save(ray_d, "./onnx_args/ray_d.pt")
         exit()
         '''
-
+        time_start = time.time()
+        
+        
         viewdirs = ray_d
         viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True)
         viewdirs = torch.reshape(viewdirs, [-1, 3]).float()
@@ -288,6 +295,8 @@ class GNT(nn.Module):
         viewdirs_ = viewdirs[:, None].expand(pts_.shape)
         embed = torch.cat([pts_, viewdirs_], dim=-1)
         input_pts, input_views = torch.split(embed, [self.posenc_dim, self.viewenc_dim], dim=-1)
+
+        print("internal forward [embed creation]: ", time.time() - time_start)
 
         # project rgb features to netwidth
         rgb_feat = self.rgbfeat_fc(rgb_feat)
@@ -312,24 +321,30 @@ class GNT(nn.Module):
         # normalize & rgb
         h = self.norm(q)
         outputs = self.rgb_fc(h.mean(dim=1))
+        self.timers.append(time.time() - time_start)
+
         if self.ret_alpha:
             return torch.cat([outputs, attn], dim=1)
         else:
             return outputs
 
 
+    def timer_sum(self):
+        print("Timer from forward pass: ", sum(self.timers)/len(self.timers))
+     
+
     def onnx_export(self):
         print("Onnx save function (for coarse net)...")
         
-        # rgb_feat = torch.randn(10, 3, 800, 800).float().cuda()
+        # rgb_feat = torch.randn(1, 3, 800, 800).float().cuda()
         rgb_feat = torch.load("./onnx_args/rgb_feat.pt")
-        # ray_diff = torch.randn(10, 3, 800, 800).float().cuda()
+        # ray_diff = torch.randn(1, 3, 800, 800).float().cuda()
         ray_diff = torch.load("./onnx_args/ray_diff.pt")
-        # mask = torch.randn(10, 3, 800, 800).float().cuda()
+        # mask = torch.randn(1, 3, 800, 800).float().cuda()
         mask = torch.load("./onnx_args/mask.pt")
-        # pts = torch.randn(10, 3, 800, 800).float().cuda()
+        # pts = torch.randn(1, 3, 800, 800).float().cuda()
         pts = torch.load("./onnx_args/pts.pt")
-        # ray_d = torch.randn(10, 3, 800, 800).float().cuda()
+        # ray_d = torch.randn(1, 3, 800, 800).float().cuda()
         ray_d = torch.load("./onnx_args/ray_d.pt")
         
         print("Data laoded...\n", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
