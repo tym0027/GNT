@@ -46,7 +46,7 @@ dependencies:
   - pyparsing=3.0.9=pyhd8ed1ab_0
   - python=3.8.13=h582c2e5_0_cpython
   - python_abi=3.8=2_cp38
-  - pytorch=1.10.1=py3.8_cuda11.1_cudnn8.0.5_0
+  - pytorch=1.12
   - pytorch-mutex=1.0=cuda
   - readline=8.1.2=h7f8727e_1
   - scipy=1.7.3=py38hc147768_0
