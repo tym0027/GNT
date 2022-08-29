@@ -207,4 +207,10 @@ def config_parser():
     )
 
 
+    parser.add_argument(
+        "--nometrics",
+        action="store_true",
+        help="Do not use lpips",
+    )
+
     return parser

@@ -2,6 +2,8 @@ import torch
 from collections import OrderedDict
 from gnt.render_ray import render_rays
 
+import time
+
 def render_single_image(
     ray_sampler,
     ray_batch,
@@ -17,6 +19,7 @@ def render_single_image(
     featmaps=None,
     ret_alpha=False,
     single_net=False,
+    stream_lined=False,
 ):
     """
     :param ray_sampler: RaySamplingSingleImage for this view
@@ -33,20 +36,23 @@ def render_single_image(
     all_ret = OrderedDict([("outputs_coarse", OrderedDict()), ("outputs_fine", OrderedDict())])
 
     N_rays = ray_batch["ray_o"].shape[0]
-
+    counter = 0
+    times = []
     for i in range(0, N_rays, chunk_size):
+        # time_start = time.time()
         chunk = OrderedDict()
         for k in ray_batch:
             if k in ["camera", "depth_range", "src_rgbs", "src_cameras"]:
                 chunk[k] = ray_batch[k]
-                print("chunk[", k, "] = ray_batch[k], ", ray_batch[k].shape)
+                # print("chunk[", k, "] = ray_batch[k], ", ray_batch[k].shape)
             elif ray_batch[k] is not None:
                 chunk[k] = ray_batch[k][i : i + chunk_size]
-                print("chunk[", k, "] = ray_batch[k][", i," : ", i, " + ", chunk_size, "]")
+                # print("chunk[", k, "] = ray_batch[k][", i," : ", i, " + ", chunk_size, "]")
             else:
                 chunk[k] = None
-                print("chunk[k] = None")
-
+                # print("chunk[k] = None")
+        # print("parse chunk time: ", time.time() - time_start)
+        time_start = time.time()
         ret = render_rays(
             chunk,
             model,
@@ -60,7 +66,7 @@ def render_single_image(
             ret_alpha=ret_alpha,
             single_net=single_net,
         )
-
+        print("chunk time: ", time.time() - time_start)
         # handle both coarse and fine outputs
         # cache chunk results on cpu
         if i == 0:
@@ -83,7 +89,11 @@ def render_single_image(
             for k in ret["outputs_fine"]:
                 if ret["outputs_fine"][k] is not None:
                     all_ret["outputs_fine"][k].append(ret["outputs_fine"][k].cpu())
+        counter = counter + 1
+        times.append(time.time() - time_start)
 
+    print(counter, " passes in an average of ", sum(times)/counter)
+    timer_start = time.time()
     rgb_strided = torch.ones(ray_sampler.H, ray_sampler.W, 3)[::render_stride, ::render_stride, :]
     # merge chunk results and reshape
     for k in all_ret["outputs_coarse"]:
@@ -105,5 +115,5 @@ def render_single_image(
             )
 
             all_ret["outputs_fine"][k] = tmp.squeeze()
-
+    print("post processing: ", time.time() - timer_start)
     return all_ret

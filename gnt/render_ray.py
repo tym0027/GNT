@@ -1,5 +1,6 @@
 import torch
 from collections import OrderedDict
+import time
 
 ########################################################################################################################
 # helper functions for nerf ray rendering
@@ -221,6 +222,8 @@ def render_rays(
 
     # pts: [N_rays, N_samples, 3]
     # z_vals: [N_rays, N_samples]
+    #  print("sample cam rays: ", )
+    s = time.time()
     pts, z_vals = sample_along_camera_ray(
         ray_o=ray_o,
         ray_d=ray_d,
@@ -229,11 +232,13 @@ def render_rays(
         inv_uniform=inv_uniform,
         det=det,
     )
+    print("sample cam rays: ", time.time() - s)
 
     # torch.save(pts, "./onnx_args/pts.pt")
 
     N_rays, N_samples = pts.shape[:2]
-    print("featmaps: ", featmaps[0].shape)
+    # print("featmaps: ", featmaps[0].shape)
+    timer_start = time.time()
     rgb_feat, ray_diff, mask = projector.compute(
         pts,
         ray_batch["camera"],
@@ -250,8 +255,15 @@ def render_rays(
     # torch.save(mask, "./onnx_args/mask.pt")
     # exit()
 
+    print("Compute projector: ", time.time() - timer_start)
+
+    start_timer = time.time()
     rgb = model.net_coarse(rgb_feat, ray_diff, mask, pts, ray_d)
-    print(rgb.shape, z_vals.shape, ret_alpha)
+    print("net_coarse outside forward: ", time.time() - start_timer)
+    # print(rgb.shape, z_vals.shape, ret_alpha)
+
+    start_timer = time.time()
+
     if ret_alpha:
         rgb, weights = rgb[:, 0:3], rgb[:, 3:]
         depth_map = torch.sum(weights * z_vals, dim=-1)
@@ -259,6 +271,8 @@ def render_rays(
         weights = None
         depth_map = None
     ret["outputs_coarse"] = {"rgb": rgb, "weights": weights, "depth": depth_map}
+
+    # print("post: ", time.time() - start_timer) # NOTE: not significant source of time
 
     if N_importance > 0:
         # detach since we would like to decouple the coarse and fine networks
