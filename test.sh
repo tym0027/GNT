@@ -5,7 +5,7 @@
 #SBATCH --partition=ce-mri
 #SBATCH --gres=gpu:v100:1
 #SBATCH --cpus-per-task=48
-#SBATCH --output=test_evaluation.log
+#SBATCH --output=_test_evaluation.log
 
 
 # python3 train.py --config configs/gnt_blender.txt --train_scenes chair --eval_scenes chair

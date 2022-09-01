@@ -1,0 +1,105 @@
+17:23:02.649677  [TIME]: Start
+17:23:02.783046  [TIME]: Start RaySampler Init
+17:23:02.792230  [TIME]: Start log_view()
+17:23:02.797779  [TIME]:  fetch data for itr:  0.005572080612182617
+17:23:02.797779  [TIME]:  Timer from end of log_view()
+17:23:02.797779  [TIME]:  Second timer from end of log_view()
+17:23:02.797779  [TIME]:  returning now...
+17:23:11.131843  [TIME]: Empty Cache...
+17:23:11.131857  [TIME]: End Image Rendering
+17:23:11.260888  [TIME]: Start RaySampler Init
+17:23:11.263228  [TIME]: Start log_view()
+17:23:11.268552  [TIME]:  fetch data for itr:  0.0053441524505615234
+17:23:11.268552  [TIME]:  Timer from end of log_view()
+17:23:11.268552  [TIME]:  Second timer from end of log_view()
+17:23:11.268552  [TIME]:  returning now...
+17:23:18.084154  [TIME]: Empty Cache...
+17:23:18.084162  [TIME]: End Image Rendering
+17:23:18.264733  [TIME]: Start RaySampler Init
+17:23:18.267263  [TIME]: Start log_view()
+17:23:18.271243  [TIME]:  fetch data for itr:  0.003999948501586914
+17:23:18.271243  [TIME]:  Timer from end of log_view()
+17:23:18.271243  [TIME]:  Second timer from end of log_view()
+17:23:18.271243  [TIME]:  returning now...
+17:23:25.243944  [TIME]: Empty Cache...
+17:23:25.243954  [TIME]: End Image Rendering
+17:23:25.442425  [TIME]: Start RaySampler Init
+17:23:25.450144  [TIME]: Start log_view()
+17:23:25.454845  [TIME]:  fetch data for itr:  0.004721641540527344
+17:23:25.454845  [TIME]:  Timer from end of log_view()
+17:23:25.454845  [TIME]:  Second timer from end of log_view()
+17:23:25.454845  [TIME]:  returning now...
+17:23:32.305700  [TIME]: Empty Cache...
+17:23:32.305709  [TIME]: End Image Rendering
+17:23:32.440569  [TIME]: Start RaySampler Init
+17:23:32.464300  [TIME]: Start log_view()
+17:23:32.467923  [TIME]:  fetch data for itr:  0.00363922119140625
+17:23:32.467923  [TIME]:  Timer from end of log_view()
+17:23:32.467923  [TIME]:  Second timer from end of log_view()
+17:23:32.467923  [TIME]:  returning now...
+17:23:39.337418  [TIME]: Empty Cache...
+17:23:39.337427  [TIME]: End Image Rendering
+17:23:39.468827  [TIME]: Start RaySampler Init
+17:23:39.472015  [TIME]: Start log_view()
+17:23:39.475869  [TIME]:  fetch data for itr:  0.003869295120239258
+17:23:39.475869  [TIME]:  Timer from end of log_view()
+17:23:39.475869  [TIME]:  Second timer from end of log_view()
+17:23:39.475869  [TIME]:  returning now...
+17:23:46.328088  [TIME]: Empty Cache...
+17:23:46.328102  [TIME]: End Image Rendering
+17:23:46.505707  [TIME]: Start RaySampler Init
+17:23:46.512531  [TIME]: Start log_view()
+17:23:46.518597  [TIME]:  fetch data for itr:  0.00608372688293457
+17:23:46.518597  [TIME]:  Timer from end of log_view()
+17:23:46.518597  [TIME]:  Second timer from end of log_view()
+17:23:46.518597  [TIME]:  returning now...
+17:23:53.354421  [TIME]: Empty Cache...
+17:23:53.354430  [TIME]: End Image Rendering
+17:23:53.477416  [TIME]: Start RaySampler Init
+17:23:53.479920  [TIME]: Start log_view()
+17:23:53.483963  [TIME]:  fetch data for itr:  0.004063606262207031
+17:23:53.483963  [TIME]:  Timer from end of log_view()
+17:23:53.483963  [TIME]:  Second timer from end of log_view()
+17:23:53.483963  [TIME]:  returning now...
+17:24:00.342454  [TIME]: Empty Cache...
+17:24:00.342462  [TIME]: End Image Rendering
+17:24:00.517226  [TIME]: Start RaySampler Init
+17:24:00.519556  [TIME]: Start log_view()
+17:24:00.523561  [TIME]:  fetch data for itr:  0.0040209293365478516
+17:24:00.523561  [TIME]:  Timer from end of log_view()
+17:24:00.523561  [TIME]:  Second timer from end of log_view()
+17:24:00.523561  [TIME]:  returning now...
+17:24:07.375858  [TIME]: Empty Cache...
+17:24:07.375866  [TIME]: End Image Rendering
+17:24:07.509486  [TIME]: Start RaySampler Init
+17:24:07.531428  [TIME]: Start log_view()
+17:24:07.535747  [TIME]:  fetch data for itr:  0.004339933395385742
+17:24:07.535747  [TIME]:  Timer from end of log_view()
+17:24:07.535747  [TIME]:  Second timer from end of log_view()
+17:24:07.535747  [TIME]:  returning now...
+17:24:14.392573  [TIME]: Empty Cache...
+17:24:14.392581  [TIME]: End Image Rendering
+17:24:14.561895  [TIME]: Start RaySampler Init
+17:24:14.564159  [TIME]: Start log_view()
+17:24:14.568080  [TIME]:  fetch data for itr:  0.003937244415283203
+17:24:14.568080  [TIME]:  Timer from end of log_view()
+17:24:14.568080  [TIME]:  Second timer from end of log_view()
+17:24:14.568080  [TIME]:  returning now...
+17:24:21.422650  [TIME]: Empty Cache...
+17:24:21.422658  [TIME]: End Image Rendering
+17:24:21.551646  [TIME]: Start RaySampler Init
+17:24:21.553504  [TIME]: Start log_view()
+17:24:21.557270  [TIME]:  fetch data for itr:  0.0037801265716552734
+17:24:21.557270  [TIME]:  Timer from end of log_view()
+17:24:21.557270  [TIME]:  Second timer from end of log_view()
+17:24:21.557270  [TIME]:  returning now...
+17:24:28.409469  [TIME]: Empty Cache...
+17:24:28.409476  [TIME]: End Image Rendering
+17:24:28.532567  [TIME]: Start RaySampler Init
+17:24:28.536035  [TIME]: Start log_view()
+17:24:28.540751  [TIME]:  fetch data for itr:  0.004743814468383789
+17:24:28.540751  [TIME]:  Timer from end of log_view()
+17:24:28.540751  [TIME]:  Second timer from end of log_view()
+17:24:28.540751  [TIME]:  returning now...
+17:24:35.404719  [TIME]: Empty Cache...
+17:24:35.404754  [TIME]: End Image Rendering

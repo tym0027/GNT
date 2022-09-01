@@ -17,6 +17,9 @@ from gnt.projection import Projector
 from gnt.data_loaders.create_training_dataset import create_training_dataset
 import imageio
 import time
+from time import gmtime, strftime
+from datetime import datetime
+
 
 def worker_init_fn(worker_id):
     np.random.seed(np.random.get_state()[1][0] + worker_id)
@@ -98,6 +101,9 @@ def eval(args):
     lpips_scores = []
     ssim_scores = []
     times = []
+    curr_time = datetime.now()
+    print(strftime(curr_time.strftime('%H:%M:%S.%f')), " [TIME]: Start" )
+    
     while True:
         try:
             data = next(iterator)
@@ -108,13 +114,15 @@ def eval(args):
             #print(type(data["rgb"]), type(data["camera"]), type(data["rgb_path"]), type(data["src_rgbs"]), type(data["src_cameras"]), type(data["depth_range"]))
             #print(data["rgb_path"])
             #print()
-            
+            curr_time = datetime.now()
+            print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: Start RaySampler Init" ) 
             time_start = time.time()            
 
             tmp_ray_sampler = RaySamplerSingleImage(data, device, render_stride=args.render_stride)
             H, W = tmp_ray_sampler.H, tmp_ray_sampler.W
             gt_img = tmp_ray_sampler.rgb.reshape(H, W, 3)
-            psnr_curr_img, lpips_curr_img, ssim_curr_img = log_view(
+            # psnr_curr_img, lpips_curr_img, ssim_curr_img = log_view(
+            log_view(
                 indx,
                 args,
                 model,
@@ -127,12 +135,16 @@ def eval(args):
                 ret_alpha=args.N_importance > 0,
                 single_net=args.single_net,
             )
-            psnr_scores.append(psnr_curr_img)
-            lpips_scores.append(lpips_curr_img)
-            ssim_scores.append(ssim_curr_img)
-            torch.cuda.empty_cache()
+            # psnr_scores.append(psnr_curr_img)
+            # lpips_scores.append(lpips_curr_img)
+            # ssim_scores.append(ssim_curr_img)
+            curr_time = datetime.now()
+            print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: Empty Cache..." )
+            # torch.cuda.empty_cache()
             indx += 1
             times.append(time.time() - time_start)
+            curr_time = datetime.now()
+            print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: End Image Rendering" )
     if not args.nometrics:
         print("Average PSNR: ", np.mean(psnr_scores))
         print("Average LPIPS: ", np.mean(lpips_scores))
@@ -144,7 +156,7 @@ def eval(args):
 
 
 
-@torch.no_grad()
+# @torch.no_grad()
 def log_view(
     global_step,
     args,
@@ -162,8 +174,12 @@ def log_view(
     print()
     with torch.no_grad():
         start_timer = time.time()
+        curr_time = datetime.now()
+        print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: Start log_view()" )
         ray_batch = ray_sampler.get_all()
-        print("fetch data for itr: ", time.time() - start_timer)
+        # print("fetch data for itr: ", time.time() - start_timer)
+        curr_time = datetime.now()
+        print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "fetch data for itr: ", time.time() - start_timer )
         if model.feature_net is not None:
             time_start = time.time()
             featmaps = model.feature_net(ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2))
@@ -196,9 +212,11 @@ def log_view(
             ret_alpha=ret_alpha,
             single_net=single_net,
         )
-        print("Timer from log_view(): ", time.time() - start_timer)
+        print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "Timer from end of log_view()")
+    print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "Second timer from end of log_view()")
     # exit() # one itr only...
     if not args.nometrics:
+        print("Shouldn't be here!!!")
         average_im = ray_sampler.src_rgbs.cpu().mean(dim=(0, 1))
 
         if args.render_stride != 1:
@@ -264,9 +282,11 @@ def log_view(
     
         print(prefix + "lpips_image: ", lpips_curr_img)
         print(prefix + "ssim_image: ", ssim_curr_img)
-        return psnr_curr_img, lpips_curr_img, ssim_curr_img
+        # return psnr_curr_img, lpips_curr_img, ssim_curr_img
     else:
-        return None, None, None
+        print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "returning now...")
+        # print("Skpping return?")
+        # return None, None, None
 
 
 if __name__ == "__main__":
