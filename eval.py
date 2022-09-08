@@ -121,6 +121,7 @@ def eval(args):
             tmp_ray_sampler = RaySamplerSingleImage(data, device, render_stride=args.render_stride)
             H, W = tmp_ray_sampler.H, tmp_ray_sampler.W
             gt_img = tmp_ray_sampler.rgb.reshape(H, W, 3)
+            '''
             # psnr_curr_img, lpips_curr_img, ssim_curr_img = log_view(
             log_view(
                 indx,
@@ -138,6 +139,45 @@ def eval(args):
             # psnr_scores.append(psnr_curr_img)
             # lpips_scores.append(lpips_curr_img)
             # ssim_scores.append(ssim_curr_img)
+            '''
+            model.switch_to_eval()
+            print()
+            with torch.no_grad():
+                start_timer = time.time()
+                curr_time = datetime.now()
+                print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: Start log_view()" )
+                ray_batch = tmp_ray_sampler.get_all()
+                # print("fetch data for itr: ", time.time() - start_timer)
+                curr_time = datetime.now()
+                print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "fetch data for itr: ", time.time() - start_timer )
+                if model.feature_net is not None:
+                    time_start = time.time()
+                    featmaps = model.feature_net(ray_batch["src_rgbs"].squeeze(0).permute(0, 3, 1, 2))
+                    print("FeatureNet ran in ", time.time() - time_start)
+                else:
+                    featmaps = [None, None]
+
+
+                print("feature maps: ", featmaps[0].shape, featmaps[1].shape)
+                render_single_image(
+                    ray_sampler=tmp_ray_sampler,
+                    ray_batch=ray_batch,
+                    model=model,
+                    projector=projector,
+                    chunk_size=args.chunk_size,
+                    N_samples=args.N_samples,
+                    inv_uniform=args.inv_uniform,
+                    det=True,
+                    N_importance=args.N_importance,
+                    white_bkgd=args.white_bkgd,
+                    render_stride=args.render_stride,
+                    featmaps=featmaps,
+                    ret_alpha=args.N_importance > 0,
+                    single_net=args.single_net,
+                )
+                # del ret
+            print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "Timer from end of log_view()")
+
             curr_time = datetime.now()
             print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: Empty Cache..." )
             # torch.cuda.empty_cache()
@@ -155,8 +195,8 @@ def eval(args):
         print(times)
 
 
-
-# @torch.no_grad()
+'''
+@torch.no_grad()
 def log_view(
     global_step,
     args,
@@ -287,7 +327,7 @@ def log_view(
         print(curr_time.strftime('%H:%M:%S.%f'), " [TIME]: ", "returning now...")
         # print("Skpping return?")
         # return None, None, None
-
+'''
 
 if __name__ == "__main__":
     parser = config.config_parser()

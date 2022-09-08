@@ -4,6 +4,8 @@ import torch.nn as nn
 
 import time
 
+import coremltools as ct
+
 # sin-cose embedding module
 class Embedder(nn.Module):
     def __init__(self, **kwargs):
@@ -273,6 +275,8 @@ class GNT(nn.Module):
 
     def forward(self, rgb_feat, ray_diff, mask, pts, ray_d):
         # compute positional embeddings
+        print("GNT input sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
+
         '''
         print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
         torch.save(pts, "./onnx_args/pts.pt")
@@ -322,7 +326,7 @@ class GNT(nn.Module):
         h = self.norm(q)
         outputs = self.rgb_fc(h.mean(dim=1))
         self.timers.append(time.time() - time_start)
-
+        print("GNT output size: ", outputs.shape)
         if self.ret_alpha:
             return torch.cat([outputs, attn], dim=1)
         else:
@@ -372,11 +376,33 @@ class GNT(nn.Module):
                 inputs,
                 "transformer_nerf.onnx",
                 export_params=True,
-                opset_version=16,
+                opset_version=14,
                 verbose=True,
                 # do_constant_folding=True,
                 input_names = ['rgb_feat', 'ray_diff', 'mask', 'pts', 'ray_d'],
                 output_names = ['outputs'])
 
         print("Done!")
+
+    def coreml_export(self):
+        print("starting coreml export (for transformer net)...")
+        # x = torch.randn(10, 3, 800, 800).cuda()
+        # x = torch.load("./onnx_args/feature_net_x.pt")
+
+        rgb_feat = torch.load("./onnx_args/rgb_feat.pt")
+        # ray_diff = torch.randn(1, 3, 800, 800).float().cuda()
+        ray_diff = torch.load("./onnx_args/ray_diff.pt")
+        # mask = torch.randn(1, 3, 800, 800).float().cuda()
+        mask = torch.load("./onnx_args/mask.pt")
+        # pts = torch.randn(1, 3, 800, 800).float().cuda()
+        pts = torch.load("./onnx_args/pts.pt")
+        # ray_d = torch.randn(1, 3, 800, 800).float().cuda()
+        ray_d = torch.load("./onnx_args/ray_d.pt")
+        
+        traced_model = torch.jit.trace(self, (rgb_feat, ray_diff, mask, pts, ray_d))
+
+        out = traced_model(rgb_feat, ray_diff, mask, pts, ray_d)
+        model = ct.convert(traced_model, inputs=[ct.TensorType(name="rgb_feat", shape=rgb_feat.shape), ct.TensorType(name="ray_diff", shape=ray_diff.shape), ct.TensorType(name="mask", shape=mask.shape), ct.TensorType(name="pts", shape=pts.shape), ct.TensorType(name="ray_d", shape=ray_d.shape)])
+        model.save("transformer_net_coreml.mlmodel")
+        print('successfully export coreML')
 

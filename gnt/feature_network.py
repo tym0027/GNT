@@ -306,7 +306,7 @@ class ResUNet(nn.Module):
         return x
 
     def forward(self, x):
-        # print("feature network: ", x.shape)
+        print("feature network input: ", x.shape)
 
         # torch.save(x, "./onnx_args/feature_net_x.pt")
 
@@ -327,10 +327,13 @@ class ResUNet(nn.Module):
         x_out = self.out_conv(x)
         if self.single_net:
             x_coarse = x_out
-            x_fine = x_out
+            x_fine = torch.zeros_like(x_coarse)
         else:
             x_coarse = x_out[:, : self.coarse_out_ch, :]
             x_fine = x_out[:, -self.fine_out_ch :, :]
+        
+        print("Shape of feature maps (from common epipolar points): \n", x_coarse.shape, x_fine.shape)
+
         return x_coarse, x_fine
 
     def onnx_export(self):
@@ -352,7 +355,7 @@ class ResUNet(nn.Module):
                 (x),
                 "feature_network_gnt_nerf.onnx",
                 export_params=True,
-                opset_version=16,
+                opset_version=14,
                 # do_constant_folding=True,
                 input_names = ['x'],
                 output_names = ['x_coarse', 'x_fine'])
