@@ -277,8 +277,8 @@ class GNT(nn.Module):
         # compute positional embeddings
         print("GNT input sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
 
-        '''
         print("GNT sizes: ", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
+        '''
         torch.save(pts, "./onnx_args/pts.pt")
         torch.save(rgb_feat, "./onnx_args/rgb_feat.pt")
         torch.save(ray_diff, "./onnx_args/ray_diff.pt")
@@ -338,36 +338,20 @@ class GNT(nn.Module):
      
 
     def onnx_export(self):
+        # NOTE: Yanyu, please see the comments to the right of each torch.load statement 
+        # Recall: chunk size = 500, and 192 = the amount of samples taken within the camera ray
+
+        # TODO: for wei change chunk size to 1.
+
         print("Onnx save function (for coarse net)...")
         
-        # rgb_feat = torch.randn(1, 3, 800, 800).float().cuda()
-        rgb_feat = torch.load("./onnx_args/rgb_feat.pt")
-        # ray_diff = torch.randn(1, 3, 800, 800).float().cuda()
-        ray_diff = torch.load("./onnx_args/ray_diff.pt")
-        # mask = torch.randn(1, 3, 800, 800).float().cuda()
-        mask = torch.load("./onnx_args/mask.pt")
-        # pts = torch.randn(1, 3, 800, 800).float().cuda()
-        pts = torch.load("./onnx_args/pts.pt")
-        # ray_d = torch.randn(1, 3, 800, 800).float().cuda()
-        ray_d = torch.load("./onnx_args/ray_d.pt")
+        rgb_feat = torch.load("./onnx_args/rgb_feat.pt") # 500, 192, 10, 35
+        ray_diff = torch.load("./onnx_args/ray_diff.pt") # 500, 192, 10, 4
+        mask = torch.load("./onnx_args/mask.pt") # 500, 192, 10, 1
+        pts = torch.load("./onnx_args/pts.pt") # 500, 192, 3
+        ray_d = torch.load("./onnx_args/ray_d.pt") # 500, 3
         
         print("Data laoded...\n", rgb_feat.shape, ray_diff.shape, mask.shape, pts.shape, ray_d.shape)
-
-        '''
-        src_rgbs = torch.load("./onnx_args/src_rgbs.pt")
-        rgb = torch.load("./onnx_args/rgb.pt")
-        ray_sampler_H = torch.load("./onnx_args/ray_sampler_H.pt")
-        ray_sampler_W = torch.load("./onnx_args/ray_sampler_W.pt")
-        ray_o = torch.load("./onnx_args/ray_o.pt")
-        ray_d = torch.load("./onnx_args/ray_d.pt")
-        camera = torch.load("./onnx_args/camera.pt")
-        depth_range = torch.load("./onnx_args/depth_range.pt")
-        src_cameras = torch.load("./onnx_args/src_cameras.pt")
-        chunk_size = torch.load("./onnx_args/chunk_size.pt")
-        N_samples = torch.load("./onnx_args/N_samples.pt")
-        N_importance = torch.load("./onnx_args/N_importance.pt")
-        render_stride = torch.load("./onnx_args/render_stride.pt")
-        '''
 
         # torch_script_graph, unconvertible_ops = onnx_utils.unconvertible_ops(self, (x,d,bound), opset_version=11)
         inputs = (rgb_feat, ray_diff, mask, pts, ray_d)
@@ -385,19 +369,15 @@ class GNT(nn.Module):
         print("Done!")
 
     def coreml_export(self):
+        # NOTE: Yanyu, please see the comments to the right of each torch.load statement
+        # Recall: chunk size = 500, and 192 = the amount of samples taken within the camera ray
         print("starting coreml export (for transformer net)...")
-        # x = torch.randn(10, 3, 800, 800).cuda()
-        # x = torch.load("./onnx_args/feature_net_x.pt")
 
-        rgb_feat = torch.load("./onnx_args/rgb_feat.pt")
-        # ray_diff = torch.randn(1, 3, 800, 800).float().cuda()
-        ray_diff = torch.load("./onnx_args/ray_diff.pt")
-        # mask = torch.randn(1, 3, 800, 800).float().cuda()
-        mask = torch.load("./onnx_args/mask.pt")
-        # pts = torch.randn(1, 3, 800, 800).float().cuda()
-        pts = torch.load("./onnx_args/pts.pt")
-        # ray_d = torch.randn(1, 3, 800, 800).float().cuda()
-        ray_d = torch.load("./onnx_args/ray_d.pt")
+        rgb_feat = torch.load("./onnx_args/rgb_feat.pt") # 500, 192, 10, 35
+        ray_diff = torch.load("./onnx_args/ray_diff.pt") # 500, 192, 10, 4
+        mask = torch.load("./onnx_args/mask.pt")# 500, 192, 10, 1
+        pts = torch.load("./onnx_args/pts.pt") # 500, 192, 3
+        ray_d = torch.load("./onnx_args/ray_d.pt") # 500, 3
         
         traced_model = torch.jit.trace(self, (rgb_feat, ray_diff, mask, pts, ray_d))
 

@@ -116,4 +116,4 @@ def render_single_image(
 
             all_ret["outputs_fine"][k] = tmp.squeeze()
     print("post processing: ", time.time() - timer_start)
-    return all_ret
+    # return all_ret

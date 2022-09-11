@@ -337,23 +337,18 @@ class ResUNet(nn.Module):
         return x_coarse, x_fine
 
     def onnx_export(self):
+        # NOTE: Yanyu, x is usually 10 x C x H  x W  
+        # There are ten input images (C = 3, H = W = 800) that are required to get features of the scene
+
+        # TODO: Batch size changed to 1 to support the onnx compiler
+        
         print("Onnx save function (feature net)...")
 
-        # x = torch.randn(10, 3, 800, 800).cuda()
-        x = torch.randn(1 , 3, 800, 800).float().cuda()
-        # d = torch.randn(160128, 3).cuda()
-        # x = torch.randn(1, 32).cuda().float()
-        # h = torch.randn(1, 31).cuda().float()
-        # bound = 1.0
-
-        # print("onnx shapes: ", x.shape, h.shape)
-
-        # torch_script_graph, unconvertible_ops = onnx_utils.unconvertible_ops(self, (x,d,bound), opset_version=11)
-        # print(set(unconvertible_ops))
+        x = torch.randn(10 , 3, 800, 800).float().cuda() 
 
         torch.onnx.export(self,
                 (x),
-                "feature_network_gnt_nerf.onnx",
+                "feature_net_onnx.onnx",
                 export_params=True,
                 opset_version=14,
                 # do_constant_folding=True,
@@ -362,9 +357,11 @@ class ResUNet(nn.Module):
         print("Done!")
 
     def coreml_export(self):
+        # NOTE: Yanyu, x is usually 10 x C x H  x W
+        # There are ten input images (C = 3, H = W = 800) that are required to get features of the scene
+
         print("starting coreml export (for feature net)...")
-        # x = torch.randn(10, 3, 800, 800).cuda()
-        x = torch.load("./onnx_args/feature_net_x.pt")
+        x = torch.randn(10, 3, 800, 800).float().cuda() 
 
         traced_model = torch.jit.trace(self, x)
 
