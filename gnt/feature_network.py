@@ -361,7 +361,7 @@ class ResUNet(nn.Module):
         # There are ten input images (C = 3, H = W = 800) that are required to get features of the scene
 
         print("starting coreml export (for feature net)...")
-        x = torch.randn(10, 3, 800, 800).float().cuda() 
+        x = torch.randn(10, 3, 400, 400).float().cuda() 
 
         traced_model = torch.jit.trace(self, x)
 
