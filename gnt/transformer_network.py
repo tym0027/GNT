@@ -371,13 +371,16 @@ class GNT(nn.Module):
     def coreml_export(self):
         # NOTE: Yanyu, please see the comments to the right of each torch.load statement
         # Recall: chunk size = 500, and 192 = the amount of samples taken within the camera ray
+        
+        # NOTE: Chunk = 500 was too big to run on phone.
+        # NOTE: Chunk = 1 
         print("starting coreml export (for transformer net)...")
 
-        rgb_feat = torch.load("./onnx_args/rgb_feat.pt") # 500, 192, 10, 35
-        ray_diff = torch.load("./onnx_args/ray_diff.pt") # 500, 192, 10, 4
-        mask = torch.load("./onnx_args/mask.pt")# 500, 192, 10, 1
-        pts = torch.load("./onnx_args/pts.pt") # 500, 192, 3
-        ray_d = torch.load("./onnx_args/ray_d.pt") # 500, 3
+        rgb_feat = torch.load("./onnx_args/rgb_feat.pt") # 1, 192, 10, 35
+        ray_diff = torch.load("./onnx_args/ray_diff.pt") # 1, 192, 10, 4
+        mask = torch.load("./onnx_args/mask.pt")# 1, 192, 10, 1
+        pts = torch.load("./onnx_args/pts.pt") # 1, 192, 3
+        ray_d = torch.load("./onnx_args/ray_d.pt") # 1, 3
         
         traced_model = torch.jit.trace(self, (rgb_feat, ray_diff, mask, pts, ray_d))
 
